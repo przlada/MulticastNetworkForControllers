@@ -11,6 +11,7 @@ public class Main {
 
     public static void main(String[] args) {
         MNCDict.Langs lang = MNCDict.Langs.PL;
+        System.out.println("działa");
         try {
             if(args.length >= 3) {
                 MNCDevice device;
