@@ -1,11 +1,9 @@
 package pl.edu.pw.elka.tin.MNC.MNCController;
 
 import pl.edu.pw.elka.tin.MNC.MNCConstants.MNCConsts;
+import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDatagram;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -15,9 +13,6 @@ import java.net.Socket;
  */
 public class MNCUnicastReceiver implements Runnable{
     ServerSocket server;
-    Socket client;
-    PrintWriter out;
-    BufferedReader in;
     MNCDevice myDevice;
 
     public MNCUnicastReceiver(MNCDevice device){
@@ -32,22 +27,6 @@ public class MNCUnicastReceiver implements Runnable{
 
     @Override
     public void run() {
-        /*
-        while(true){
-            try{
-                client = server.accept();
-                in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                out = new PrintWriter(client.getOutputStream(), true);
-                String line;
-                line = in.readLine();
-                myDevice.log.acction("odebrano unicast "+line);
-                out.println(line);
-                client.close();
-            } catch (IOException e) {
-                System.out.println("Accept failed: 4321");
-            }
-        }
-        */
         while(true){
             ClientWorker w;
             try{
@@ -70,17 +49,16 @@ public class MNCUnicastReceiver implements Runnable{
 
         public void run(){
             String line;
-            BufferedReader in = null;
-            PrintWriter out = null;
+            ObjectInputStream in = null;
             try{
-                in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                out = new PrintWriter(client.getOutputStream(), true);
-                line = in.readLine();
-                myDevice.log.acction("odebrano unicast "+line);
-                out.println(line);
+                in  = new ObjectInputStream(client.getInputStream());
+                MNCDatagram sendDatagram = (MNCDatagram) in.readObject();
+                myDevice.log.acction("odebrano unicast "+sendDatagram);
                 client.close();
             } catch (IOException e) {
                 System.out.println("in or out failed");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
         }
     }

@@ -78,15 +78,12 @@ public abstract class MNCDevice implements Serializable{
         log.acction("wyslano "+d.toString());
     }
 
-    public void sendUnicastDatagram(MNCDatagram d, MNCAddress adr){
+    public void sendUnicastDatagram(MNCDatagram d){
         try{
-            Socket socket = new Socket(adr.getJavaAddress(), MNCConsts.UCAST_PORT);
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out.println(getName());
-            log.acction("wyslano unicast: "+getName());
-            String line = in.readLine();
-            log.acction("echo unicast: "+line);
+            Socket socket = new Socket(d.getReceiver().getJavaAddress(), MNCConsts.UCAST_PORT);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(d);
+            log.acction("wyslano unicast: "+d);
             socket.close();
         } catch (UnknownHostException e) {
             System.out.println("Unknown host: kq6py");
