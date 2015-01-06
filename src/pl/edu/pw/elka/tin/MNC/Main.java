@@ -17,7 +17,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) throws SocketException{
-        System.out.println("dziala");
+        System.out.println("dziala2");
         NetworkInterface netint = NetworkInterface.getByName(MNCConsts.DEFAULT_INTERFACE_NAME);
         InetAddress inetAddress = netint.getInterfaceAddresses().get(0).getAddress();
 
