@@ -24,6 +24,7 @@ public class MNCUnicastReceiver implements Runnable{
         myDevice = device;
         try{
             server = new ServerSocket(MNCConsts.UCAST_PORT);
+            System.out.println("serwer nasłuchuje");
         } catch (IOException e) {
             System.out.println("Could not listen on port");
         }
@@ -37,10 +38,8 @@ public class MNCUnicastReceiver implements Runnable{
             System.out.println("Accept failed: 4321");
         }
         try{
-            in = new BufferedReader(new InputStreamReader(
-                    client.getInputStream()));
-            out = new PrintWriter(client.getOutputStream(),
-                    true);
+            in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            out = new PrintWriter(client.getOutputStream(), true);
         } catch (IOException e) {
             System.out.println("Read failed");
         }
