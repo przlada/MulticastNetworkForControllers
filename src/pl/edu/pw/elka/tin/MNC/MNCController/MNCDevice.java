@@ -3,6 +3,8 @@ package pl.edu.pw.elka.tin.MNC.MNCController;
 import pl.edu.pw.elka.tin.MNC.MNCAddress;
 import pl.edu.pw.elka.tin.MNC.MNCConstants.MNCConsts;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDatagram;
+import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameter;
+import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameterSet;
 import pl.edu.pw.elka.tin.MNC.MNCSystemLog;
 
 import java.io.*;
@@ -19,10 +21,10 @@ public abstract class MNCDevice implements Serializable{
     protected MNCSystemLog log;
     protected Hashtable<String, MNCAddress> tokensOwners;
     protected Set<String> myGroups;
+    protected Hashtable<String, Hashtable<Integer, Hashtable<Integer, MNCDeviceParameter>>> receivedParameters;
     private String name;
     private MNCAddress myAddress;
     private DatagramSocket udpClient;
-
     private Thread mcastReceiver;
     private Thread unicastReceiver;
 
@@ -34,6 +36,8 @@ public abstract class MNCDevice implements Serializable{
         tokensOwners = new Hashtable<String, MNCAddress>();
         myGroups = new HashSet<String>();
         udpClient = new DatagramSocket();
+        //receivedParameters = new Hashtable<Integer, Hashtable<Integer, MNCDeviceParameter>>();
+        receivedParameters = new Hashtable<String, Hashtable<Integer, Hashtable<Integer, MNCDeviceParameter>>>();
         try {
             mcastReceiver = new Thread(new MNCMulticastReceiver(this));
             unicastReceiver = new Thread(new MNCUnicastReceiver(this));
@@ -97,6 +101,31 @@ public abstract class MNCDevice implements Serializable{
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean receiveParameter(String group, MNCDeviceParameter param){
+        if(!receivedParameters.containsKey(group)){
+            receivedParameters.put(group, new Hashtable<Integer, Hashtable<Integer, MNCDeviceParameter>>());
+        }
+        if(!receivedParameters.get(group).contains(param.getParameterSetId())){
+            receivedParameters.get(group).put(param.getParameterSetId(), new Hashtable<Integer, MNCDeviceParameter>());
+        }
+        receivedParameters.get(group).get(param.getParameterSetId()).put(param.getIndex(),param);
+        if(receivedParameters.get(group).get(param.getParameterSetId()).size() >= MNCConsts.PARAMETER_SET_SIZE) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean dataConsumption(String group, int paramSetId){
+        Hashtable<Integer, Hashtable<Integer, MNCDeviceParameter>> set = receivedParameters.get(paramSetId);
+        if(set != null){
+            Hashtable<Integer, MNCDeviceParameter> parameters = set.get(paramSetId);
+            set.remove(paramSetId);
+            log.acction("skonsumowano dane grupy "+group+" id: "+paramSetId);
+            return true;
+        }
+        return false;
     }
     protected abstract void checkTokenOwners();
 }

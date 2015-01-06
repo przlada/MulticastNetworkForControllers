@@ -17,12 +17,20 @@ public class MNCDeviceParameter implements Serializable {
         value = o;
     }
 
-    public void setParameterSetId(int id){
-        parameterSetId = id;
-    }
-
     public String getText(){
         return (String) value;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public int getParameterSetId() {
+        return parameterSetId;
+    }
+
+    public void setParameterSetId(int id){
+        parameterSetId = id;
     }
 
     public int getNumber() {

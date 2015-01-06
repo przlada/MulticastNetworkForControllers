@@ -3,6 +3,7 @@ package pl.edu.pw.elka.tin.MNC.MNCController;
 import pl.edu.pw.elka.tin.MNC.MNCAddress;
 import pl.edu.pw.elka.tin.MNC.MNCConstants.MNCConsts;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDatagram;
+import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameter;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameterSet;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCToken;
 import pl.edu.pw.elka.tin.MNC.MNCSystemLog;
@@ -80,6 +81,13 @@ public class MNCController extends MNCDevice {
                         sendDatagram(new MNCDatagram(getMyAddress(), MNCConsts.MULTICAST_ADDR, datagram.getGroup(), MNCDatagram.TYPE.IAM_IN_GROUP, null));
                     } catch (IOException e) {
                         e.printStackTrace();
+                    }
+                }
+                break;
+            case DATA_FRAGMENT:
+                if(getGroups().contains(datagram.getGroup())){
+                    if(receiveParameter(datagram.getGroup(), (MNCDeviceParameter)datagram.getData())){
+                        dataConsumption(datagram.getGroup(), ((MNCDeviceParameter)datagram.getData()).getParameterSetId());
                     }
                 }
                 break;
