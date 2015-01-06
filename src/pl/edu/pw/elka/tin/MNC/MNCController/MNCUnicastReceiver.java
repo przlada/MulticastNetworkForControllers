@@ -32,26 +32,20 @@ public class MNCUnicastReceiver implements Runnable{
 
     @Override
     public void run() {
-        try{
-            client = server.accept();
-        } catch (IOException e) {
-            System.out.println("Accept failed: 4321");
-        }
-        try{
-            in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            out = new PrintWriter(client.getOutputStream(), true);
-        } catch (IOException e) {
-            System.out.println("Read failed");
-        }
-        String line;
-        while(client.isConnected()){
+        while(true){
             try{
+                client = server.accept();
+                in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                out = new PrintWriter(client.getOutputStream(), true);
+                String line;
                 line = in.readLine();
                 myDevice.log.acction("odebrano unicast "+line);
                 out.println(line);
+                client.close();
             } catch (IOException e) {
-                System.out.println("Read failed");
+                System.out.println("Accept failed: 4321");
             }
         }
+
     }
 }
