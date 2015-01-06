@@ -8,6 +8,13 @@ import java.util.Hashtable;
  */
 public class MNCDict {
     private static Hashtable<Langs, Hashtable<String, String>> Dicts;
+
+    public static String getLangText(Langs lang, String textKey){
+        String val = Dicts.get(lang).get(textKey);
+        if(val == null)
+            val = textKey;
+        return val;
+    }
     public static enum Langs{
         PL
     }
@@ -17,15 +24,9 @@ public class MNCDict {
         PLDict.put("MNCName", "System komunikacji rozgłoszeniowej dla grup sterowników");
         PLDict.put("ControllerStarted", "Uruchomiono sterownik MNC:");
         PLDict.put("NoNameController", "brak nazwy");
+        PLDict.put("HaveNewTokenOwner", "Ustalono adres sterownika z tokenem grupy:");
 
 
         Dicts.put(Langs.PL, PLDict);
-    }
-
-    public static String getLangText(Langs lang, String textKey){
-        String val = Dicts.get(lang).get(textKey);
-        if(val == null)
-            val = textKey;
-        return val;
     }
 }

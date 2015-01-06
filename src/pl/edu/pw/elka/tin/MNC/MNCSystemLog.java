@@ -1,6 +1,6 @@
 package pl.edu.pw.elka.tin.MNC;
 
-import pl.edu.pw.elka.tin.MNC.MNCConstants.MNCDict;
+import pl.edu.pw.elka.tin.MNC.MNCController.MNCDevice;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -14,22 +14,27 @@ import static pl.edu.pw.elka.tin.MNC.MNCConstants.MNCDict.*;
 public class MNCSystemLog {
     private Langs lang;
     private String controllerName = null;
+    private MNCDevice device;
 
     public MNCSystemLog(Langs l){
-        this(l,getLangText(l,"NoNameController"));
-    }
-    public MNCSystemLog(Langs l, String controllerName){
         setLang(l);
-        this.controllerName = controllerName;
+    }
 
+    public void setDevice(MNCDevice dev){
+        device = dev;
+        if(dev != null)
+            controllerName = device.getName();
+        else
+            controllerName = getLangText(lang, "NoNameController");
         print(getLangText(lang,"ControllerStarted") + controllerName);
+    }
+
+    public synchronized Langs getLang(){
+        return lang;
     }
 
     public synchronized void setLang(Langs l){
         lang = l;
-    }
-    public synchronized Langs getLang(){
-        return lang;
     }
 
     private void print(String text){
@@ -41,4 +46,7 @@ public class MNCSystemLog {
         print(type);
     }
 
+    public void actionNewTokenOwner(String group){
+        print(getLangText(lang,"HaveNewTokenOwner")+group+" "+device.getTokensOwners().get(group));
+    }
 }

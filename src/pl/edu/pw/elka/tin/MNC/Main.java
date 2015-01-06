@@ -9,15 +9,12 @@ import pl.edu.pw.elka.tin.MNC.MNCController.MNCMonitor;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Scanner;
 
 
 public class Main {
 
     public static void main(String[] args) throws SocketException{
-        System.out.println("dziala5");
         NetworkInterface netint = NetworkInterface.getByName(MNCConsts.DEFAULT_INTERFACE_NAME);
         InetAddress inetAddress = netint.getInterfaceAddresses().get(0).getAddress();
 
@@ -28,9 +25,9 @@ public class Main {
             if(args.length >= 2) {
                 MNCDevice device;
                 if (args[1].equals("C"))
-                    device = new MNCController(args[0], new MNCAddress(inetAddress.toString(), MNCAddress.TYPE.CONTROLLER), new MNCSystemLog(lang, args[0]));
+                    device = new MNCController(args[0], new MNCAddress(inetAddress.toString(), MNCAddress.TYPE.CONTROLLER), new MNCSystemLog(lang));
                 else
-                    device = new MNCMonitor(args[0], new MNCAddress(inetAddress.toString(), MNCAddress.TYPE.MONITOR), new MNCSystemLog(lang, args[0]));
+                    device = new MNCMonitor(args[0], new MNCAddress(inetAddress.toString(), MNCAddress.TYPE.MONITOR), new MNCSystemLog(lang));
                 for (int i = 2; i < args.length; i++)
                     device.addGroup(args[i]);
                 while(true){

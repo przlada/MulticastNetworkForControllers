@@ -21,13 +21,11 @@ import java.util.TreeMap;
  * @author Maciek
  */
 public abstract class MNCDevice implements Serializable{
-    private String name;
-    private MNCAddress myAddress;
     protected MNCSystemLog log;
-
     protected Hashtable<String, MNCAddress> tokensOwners;
     protected Set<String> myGroups;
-
+    private String name;
+    private MNCAddress myAddress;
     private DatagramSocket udpClient;
 
     private Thread mcastReceiver;
@@ -37,8 +35,8 @@ public abstract class MNCDevice implements Serializable{
         this.log = log;
         myAddress = addr;
 
+        log.setDevice(this);
         tokensOwners = new Hashtable<String, MNCAddress>();
-
         myGroups = new HashSet<String>();
 
         udpClient = new DatagramSocket();
@@ -50,6 +48,10 @@ public abstract class MNCDevice implements Serializable{
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
     public MNCAddress getMyAddress() {
         return myAddress;
     }
@@ -57,6 +59,10 @@ public abstract class MNCDevice implements Serializable{
     public void addGroup(String group){
         myGroups.add(group);
         checkTokenOwners();
+    }
+
+    public Hashtable<String, MNCAddress> getTokensOwners(){
+        return tokensOwners;
     }
 
     public Set<String> getGroups(){
