@@ -19,6 +19,7 @@ public class Main {
     public static void main(String[] args) throws SocketException{
         NetworkInterface netint = NetworkInterface.getByName(MNCConsts.DEFAULT_INTERFACE_NAME);
         InetAddress inetAddress = netint.getInterfaceAddresses().get(0).getAddress();
+        System.out.println(inetAddress.getHostAddress());
         MNCAddress myAddress;
         String command;
         Scanner in = new Scanner(System.in);
