@@ -98,8 +98,14 @@ public class MNCToken implements Serializable {
                         e.printStackTrace();
                     }
                 }
+                try {
+                    Thread.sleep(MNCConsts.WAIT_FOR_DATA_CONFIRMATION);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 if(notConfirmed.size() <= 0)
                     break;
+
             }
             retransmitionBuffer.remove(data.getParameterSetID());
         }
