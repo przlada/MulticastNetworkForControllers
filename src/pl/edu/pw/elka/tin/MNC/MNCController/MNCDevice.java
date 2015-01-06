@@ -21,6 +21,7 @@ public abstract class MNCDevice implements Serializable{
     protected Hashtable<String, MNCAddress> tokensOwners;
     protected Set<String> myGroups;
     protected Hashtable<String, Hashtable<Integer, Hashtable<Integer, MNCDeviceParameter>>> receivedParameters;
+    protected Hashtable<String, HashSet<Integer>> consumedParametersSets;
     private String name;
     private MNCAddress myAddress;
     private DatagramSocket udpClient;
@@ -35,8 +36,8 @@ public abstract class MNCDevice implements Serializable{
         tokensOwners = new Hashtable<String, MNCAddress>();
         myGroups = new HashSet<String>();
         udpClient = new DatagramSocket();
-        //receivedParameters = new Hashtable<Integer, Hashtable<Integer, MNCDeviceParameter>>();
         receivedParameters = new Hashtable<String, Hashtable<Integer, Hashtable<Integer, MNCDeviceParameter>>>();
+        consumedParametersSets = new Hashtable<String, HashSet<Integer>>();
         try {
             mcastReceiver = new Thread(new MNCMulticastReceiver(this));
             unicastReceiver = new Thread(new MNCUnicastReceiver(this));
@@ -110,8 +111,6 @@ public abstract class MNCDevice implements Serializable{
             receivedParameters.get(group).put(param.getParameterSetId(), new Hashtable<Integer, MNCDeviceParameter>());
         }
         receivedParameters.get(group).get(param.getParameterSetId()).put(param.getIndex(),param);
-        System.out.println(param.getText()+" : "+param.getIndex()+" : "+receivedParameters.get(group).get(param.getParameterSetId()).size());
-
         if(receivedParameters.get(group).get(param.getParameterSetId()).size() >= MNCConsts.PARAMETER_SET_SIZE) {
             return true;
         }
@@ -119,10 +118,12 @@ public abstract class MNCDevice implements Serializable{
     }
 
     public boolean dataConsumption(String group, int paramSetId){
-        System.out.println("funkcja jest wywolywana");
         Hashtable<Integer, Hashtable<Integer, MNCDeviceParameter>> set = receivedParameters.get(group);
         if(set != null){
             Hashtable<Integer, MNCDeviceParameter> parameters = set.get(paramSetId);
+            if(!consumedParametersSets.containsKey(group))
+                consumedParametersSets.put(group, new HashSet<Integer>());
+            consumedParametersSets.get(group).add(paramSetId);
             set.remove(paramSetId);
             log.acction("skonsumowano dane grupy "+group+" id: "+paramSetId);
             return true;

@@ -45,8 +45,10 @@ public class MNCMonitor extends MNCDevice {
                 break;
             case DATA_FRAGMENT:
                 if(getGroups().contains(datagram.getGroup())){
-                    if(receiveParameter(datagram.getGroup(), (MNCDeviceParameter)datagram.getData())){
-                        dataConsumption(datagram.getGroup(), ((MNCDeviceParameter)datagram.getData()).getParameterSetId());
+                    if(!consumedParametersSets.containsKey(datagram.getGroup()) || !consumedParametersSets.get(datagram.getGroup()).contains(((MNCDeviceParameter)datagram.getData()).getParameterSetId())){
+                        if(receiveParameter(datagram.getGroup(), (MNCDeviceParameter)datagram.getData())) {
+                            dataConsumption(datagram.getGroup(), ((MNCDeviceParameter) datagram.getData()).getParameterSetId());
+                        }
                     }
                 }
                 break;
