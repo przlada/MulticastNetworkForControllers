@@ -44,7 +44,7 @@ public class MNCUnicastReceiver implements Runnable{
             System.out.println("Read failed");
         }
         String line;
-        while(true){
+        while(client.isConnected()){
             try{
                 line = in.readLine();
                 myDevice.log.acction("odebrano unicast "+line);
