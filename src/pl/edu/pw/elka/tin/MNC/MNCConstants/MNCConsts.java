@@ -14,6 +14,7 @@ public interface MNCConsts {
     public static final MNCAddress MULTICAST_ADDR = new MNCAddress("ff02::1:1:1", MNCAddress.TYPE.MULTICAST_GROUP);
     public static final int MCAST_PORT = 4446;
     public static final int MAX_UDP_PACKET_SIZE = 1400;
+    public static final String DEFAULT_INTERFACE_NAME = "eth0";
 
     public static final int WAIT_FOR_TOKEN_TIMEOUT = 5000;
     public static final int WAIT_FOR_TMP_TOKEN = 5000;
