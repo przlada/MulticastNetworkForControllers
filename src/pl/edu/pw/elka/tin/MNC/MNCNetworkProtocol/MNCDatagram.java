@@ -65,7 +65,7 @@ public final class MNCDatagram implements Serializable {
 
     public String toString(){
         if(type == TYPE.DATA_FRAGMENT)
-            return "id:"+datagramId+" group:"+group+" from:"+sender.toString() + " to:"+receiver.toString() + " type:"+TYPE.getName(type) +":"+((MNCDeviceParameter)data).getText();
+            return "id:"+datagramId+" group:"+group+" from:"+sender.toString() + " to:"+receiver.toString() + " type:"+TYPE.getName(type) +":"+((MNCDeviceParameter)data).getParameterSetId()+":"+((MNCDeviceParameter)data).getText();
         return "id:"+datagramId+" group:"+group+" from:"+sender.toString() + " to:"+receiver.toString() + " type:"+TYPE.getName(type);
     }
 
