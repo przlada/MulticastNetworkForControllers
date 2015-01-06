@@ -36,6 +36,10 @@ public class Main {
                         command = in.nextLine();
                         System.out.println(((MNCController) device).getToken(command));
                     }
+                    else if(command.equals("tcp")){
+                        command = in.nextLine();
+                        device.sendUnicastDatagram(null,device.getTokensOwners().get(command));
+                    }
                 }
             }
         } catch (java.io.IOException e) {
