@@ -32,6 +32,7 @@ public class MNCUnicastReceiver implements Runnable{
 
     @Override
     public void run() {
+        /*
         while(true){
             try{
                 client = server.accept();
@@ -46,6 +47,41 @@ public class MNCUnicastReceiver implements Runnable{
                 System.out.println("Accept failed: 4321");
             }
         }
+        */
+        while(true){
+            ClientWorker w;
+            try{
+                w = new ClientWorker(server.accept());
+                Thread t = new Thread(w);
+                t.start();
+            } catch (IOException e) {
+                System.out.println("Accept failed: 4444");
+            }
+        }
 
+    }
+
+    private class ClientWorker implements Runnable {
+        private Socket client;
+
+        ClientWorker(Socket client) {
+            this.client = client;
+        }
+
+        public void run(){
+            String line;
+            BufferedReader in = null;
+            PrintWriter out = null;
+            try{
+                in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                out = new PrintWriter(client.getOutputStream(), true);
+                line = in.readLine();
+                myDevice.log.acction("odebrano unicast "+line);
+                out.println(line);
+                client.close();
+            } catch (IOException e) {
+                System.out.println("in or out failed");
+            }
+        }
     }
 }
