@@ -100,6 +100,7 @@ public class MNCToken implements Serializable {
                     }
                 }
                 try {
+                    System.out.println("Czekam przed retransmiscją");
                     Thread.sleep(MNCConsts.WAIT_FOR_DATA_CONFIRMATION);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
