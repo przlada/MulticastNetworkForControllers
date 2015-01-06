@@ -17,6 +17,7 @@ public class Main {
     public static void main(String[] args) throws SocketException{
         NetworkInterface netint = NetworkInterface.getByName(MNCConsts.DEFAULT_INTERFACE_NAME);
         InetAddress inetAddress = netint.getInterfaceAddresses().get(0).getAddress();
+
         String command;
         Scanner in = new Scanner(System.in);
         MNCDict.Langs lang = MNCDict.Langs.PL;
