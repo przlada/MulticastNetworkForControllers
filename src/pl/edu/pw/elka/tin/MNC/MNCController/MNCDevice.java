@@ -119,7 +119,7 @@ public abstract class MNCDevice implements Serializable{
     }
 
     public boolean dataConsumption(String group, int paramSetId){
-        Hashtable<Integer, Hashtable<Integer, MNCDeviceParameter>> set = receivedParameters.get(paramSetId);
+        Hashtable<Integer, Hashtable<Integer, MNCDeviceParameter>> set = receivedParameters.get(group);
         if(set != null){
             Hashtable<Integer, MNCDeviceParameter> parameters = set.get(paramSetId);
             set.remove(paramSetId);
