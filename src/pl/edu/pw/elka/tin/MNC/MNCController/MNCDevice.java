@@ -5,16 +5,11 @@ import pl.edu.pw.elka.tin.MNC.MNCConstants.MNCConsts;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDatagram;
 import pl.edu.pw.elka.tin.MNC.MNCSystemLog;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.SocketException;
+import java.io.*;
+import java.net.*;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
-import java.util.TreeMap;
-
 
 /**
  * Abstrakcyjna klasa reprezentująca sterownik
@@ -29,20 +24,21 @@ public abstract class MNCDevice implements Serializable{
     private DatagramSocket udpClient;
 
     private Thread mcastReceiver;
+    private Thread unicastReceiver;
 
     public MNCDevice(String name, MNCAddress addr, MNCSystemLog log) throws SocketException {
         this.name = name;
         this.log = log;
         myAddress = addr;
-
         log.setDevice(this);
         tokensOwners = new Hashtable<String, MNCAddress>();
         myGroups = new HashSet<String>();
-
         udpClient = new DatagramSocket();
         try {
             mcastReceiver = new Thread(new MNCMulticastReceiver(this));
+            unicastReceiver = new Thread(new MNCUnicastReceiver(this));
             mcastReceiver.start();
+            unicastReceiver.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -82,7 +78,21 @@ public abstract class MNCDevice implements Serializable{
         log.acction("wyslano "+d.toString());
     }
 
-    protected void checkTokenOwners(){
-        System.out.println("tutaj");
-    }
+    public void sendUnicastDatagram(MNCDatagram d, MNCAddress adr){
+        try{
+            Socket socket = new Socket(adr.getJavaAddress(), MNCConsts.UCAST_PORT);
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out.println(getName());
+            log.acction("wyslano unicast: "+getName());
+            String line = in.readLine();
+            log.acction("echo unicast: "+line);
+            socket.close();
+        } catch (UnknownHostException e) {
+            System.out.println("Unknown host: kq6py");
+        } catch  (IOException e) {
+            System.out.println("No I/O");
+        }
+}
+    protected abstract void checkTokenOwners();
 }

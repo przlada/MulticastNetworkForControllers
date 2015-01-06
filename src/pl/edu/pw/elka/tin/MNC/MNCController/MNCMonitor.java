@@ -32,6 +32,7 @@ public class MNCMonitor extends MNCDevice {
             case I_HAVE_TOKEN:
                 tokensOwners.put(datagram.getGroup(),datagram.getSender());
                 log.actionNewTokenOwner(datagram.getGroup());
+                sendUnicastDatagram(null,datagram.getSender());
                 break;
             case WHO_IN_GROUP:
                 if(getGroups().contains(datagram.getGroup())){
