@@ -15,11 +15,20 @@ public class MNCDeviceParameterSet implements Serializable{
     public MNCDeviceParameterSet(){
         parameters = new MNCDeviceParameter[MNCConsts.PARAMETER_SET_SIZE];
     }
+
+    public int getParameterSetID(){
+        return parameterSetID;
+    }
+
     public void setParameterSetID(int id){
         parameterSetID = id;
         for(MNCDeviceParameter param : parameters){
             param.setParameterSetId(id);
         }
+    }
+
+    public MNCDeviceParameter[] getParameters(){
+        return parameters;
     }
     public void populateSet(){
         for(int i=0; i<MNCConsts.PARAMETER_SET_SIZE; i++){

@@ -6,6 +6,7 @@ import pl.edu.pw.elka.tin.MNC.MNCController.MNCController;
 import pl.edu.pw.elka.tin.MNC.MNCController.MNCDevice;
 import pl.edu.pw.elka.tin.MNC.MNCController.MNCMonitor;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDatagram;
+import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameterSet;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -43,7 +44,9 @@ public class Main {
                     }
                     else if(command.equals("tcp")){
                         command = in.nextLine();
-                        MNCDatagram data = new MNCDatagram(myAddress,device.getTokensOwners().get(command),command, MNCDatagram.TYPE.DATA_FULL,null);
+                        MNCDeviceParameterSet paramSet = new MNCDeviceParameterSet();
+                        paramSet.populateSet();
+                        MNCDatagram data = new MNCDatagram(myAddress,device.getTokensOwners().get(command),command, MNCDatagram.TYPE.DATA_FULL,paramSet);
                         device.sendUnicastDatagram(data);
                     }
                 }
@@ -52,7 +55,5 @@ public class Main {
             e.printStackTrace();
         }
         in.close();
-
-
     }
 }

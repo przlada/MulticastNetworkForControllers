@@ -1,9 +1,13 @@
 package pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol;
 
+import com.sun.javafx.fxml.expression.Expression;
 import pl.edu.pw.elka.tin.MNC.MNCAddress;
 import pl.edu.pw.elka.tin.MNC.MNCConstants.MNCConsts;
+import pl.edu.pw.elka.tin.MNC.MNCController.MNCDevice;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.Hashtable;
 import java.util.TreeSet;
 
 /**
@@ -13,6 +17,7 @@ import java.util.TreeSet;
 public class MNCToken implements Serializable {
     private final String group;
     private TreeSet<MNCAddress> devicesInGroup;
+    private Hashtable<Integer, TokenRetransmitionBuffer> retransmitionBuffer;
     private int lastDataId;
     private int broadcastCounter;
 
@@ -21,11 +26,14 @@ public class MNCToken implements Serializable {
         devicesInGroup = new TreeSet<MNCAddress>();
         lastDataId = 0;
         broadcastCounter = 0;
+        retransmitionBuffer = new Hashtable<Integer, TokenRetransmitionBuffer>();
     }
 
     public void addDevice(MNCAddress address){
         devicesInGroup.add(address);
     }
+    public void removeDevice(MNCAddress address) { devicesInGroup.remove(address) ;}
+
     public MNCAddress getNextController(MNCAddress controller){
         MNCAddress next = devicesInGroup.higher(controller);
         while(next != controller){
@@ -46,5 +54,37 @@ public class MNCToken implements Serializable {
     public int getNextDataId(){
         lastDataId+=1;
         return lastDataId;
+    }
+
+    public void addParameterSetToTransmit(MNCDeviceParameterSet set, MNCDevice sender){
+        TokenRetransmitionBuffer buffer = new TokenRetransmitionBuffer(set, new TreeSet<MNCAddress>(devicesInGroup), sender);
+        retransmitionBuffer.put(set.getParameterSetID(), buffer);
+        new Thread(buffer).run();
+    }
+
+    private class TokenRetransmitionBuffer implements Runnable {
+        private MNCDeviceParameterSet data;
+        private TreeSet<MNCAddress> notConfirmed;
+        private MNCDevice mySender;
+        public TokenRetransmitionBuffer(MNCDeviceParameterSet set, TreeSet<MNCAddress> devices, MNCDevice sender){
+            notConfirmed = devices;
+            data = set;
+            mySender = sender;
+        }
+
+        @Override
+        public void run() {
+            for(int i=0; i<1; i++){
+                for(int j=0; j<MNCConsts.PARAMETER_SET_SIZE; j++){
+                    MNCDatagram datagram = new MNCDatagram(mySender.getMyAddress(), MNCConsts.MULTICAST_ADDR, group, MNCDatagram.TYPE.DATA_FRAGMENT, data.getParameters()[j]);
+                    try {
+                        mySender.sendDatagram(datagram);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            retransmitionBuffer.remove(data.getParameterSetID());
+        }
     }
 }

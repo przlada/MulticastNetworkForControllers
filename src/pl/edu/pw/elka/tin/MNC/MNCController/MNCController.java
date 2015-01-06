@@ -3,6 +3,7 @@ package pl.edu.pw.elka.tin.MNC.MNCController;
 import pl.edu.pw.elka.tin.MNC.MNCAddress;
 import pl.edu.pw.elka.tin.MNC.MNCConstants.MNCConsts;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDatagram;
+import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameterSet;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCToken;
 import pl.edu.pw.elka.tin.MNC.MNCSystemLog;
 
@@ -91,12 +92,17 @@ public class MNCController extends MNCDevice {
             case DATA_FULL:
                 MNCToken token = tokens.get(datagram.getGroup());
                 if(token != null) {
-                    return token.getNextDataId();
+                    int id = token.getNextDataId();
+                    MNCDeviceParameterSet paramSet = (MNCDeviceParameterSet)datagram.getData();
+                    paramSet.setParameterSetID(id);
+                    token.addParameterSetToTransmit(paramSet, this);
+                    return id;
                 }
                 break;
         }
         return 0;
     }
+
 
     protected void checkTokenOwners(){
         for (String group : myGroups) {
