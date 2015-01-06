@@ -62,7 +62,7 @@ public class MNCToken implements Serializable {
     public void addParameterSetToTransmit(MNCDeviceParameterSet set, MNCDevice sender){
         TokenRetransmitionBuffer buffer = new TokenRetransmitionBuffer(set, new TreeSet<MNCAddress>(devicesInGroup), sender);
         retransmitionBuffer.put(set.getParameterSetID(), buffer);
-        new Thread(buffer).run();
+        new Thread(buffer).start();
     }
 
     public void parameterSetConfirmation(int paramSetId, MNCAddress receiver){
@@ -82,7 +82,7 @@ public class MNCToken implements Serializable {
             mySender = sender;
         }
 
-        public void parameterSetConfirmation(MNCAddress receiver){
+        public synchronized void parameterSetConfirmation(MNCAddress receiver){
             System.out.println("usuwanie po akceptacji");
             if(notConfirmed.contains(receiver))
                 notConfirmed.remove(receiver);
