@@ -17,10 +17,8 @@ public class Main {
 
     public static void main(String[] args) throws SocketException{
         NetworkInterface netint = NetworkInterface.getByName("eth0");
-        System.out.printf("Display name: %s\n", netint.getDisplayName());
-        System.out.printf("Name: %s\n", netint.getName());
         InetAddress inetAddress = netint.getInterfaceAddresses().get(0).getAddress();
-        System.out.printf("InetAddress: %s\n", inetAddress);
+        System.out.println(inetAddress.toString());
 
         String command;
         Scanner in = new Scanner(System.in);
