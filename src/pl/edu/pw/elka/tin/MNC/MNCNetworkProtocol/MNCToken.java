@@ -82,7 +82,7 @@ public class MNCToken implements Serializable {
             mySender = sender;
         }
 
-        public synchronized void parameterSetConfirmation(MNCAddress receiver){
+        public void parameterSetConfirmation(MNCAddress receiver){
             System.out.println("usuwanie po akceptacji");
             if(notConfirmed.contains(receiver))
                 notConfirmed.remove(receiver);
