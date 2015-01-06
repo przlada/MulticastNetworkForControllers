@@ -91,6 +91,11 @@ public class MNCController extends MNCDevice {
                     }
                 }
                 break;
+            case CONSUMPTION_CONFIRMATION:
+                MNCToken token2 = tokens.get(datagram.getGroup());
+                if(token2 != null)
+                    token2.parameterSetConfirmation((Integer)datagram.getData(), datagram.getSender());
+                break;
         }
     }
 

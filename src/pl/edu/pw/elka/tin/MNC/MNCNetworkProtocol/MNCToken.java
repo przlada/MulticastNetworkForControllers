@@ -55,6 +55,9 @@ public class MNCToken implements Serializable {
         lastDataId+=1;
         return lastDataId;
     }
+    public Hashtable<Integer, TokenRetransmitionBuffer> getRetransmitionBuffer(){
+        return retransmitionBuffer;
+    }
 
     public void addParameterSetToTransmit(MNCDeviceParameterSet set, MNCDevice sender){
         TokenRetransmitionBuffer buffer = new TokenRetransmitionBuffer(set, new TreeSet<MNCAddress>(devicesInGroup), sender);
@@ -62,14 +65,26 @@ public class MNCToken implements Serializable {
         new Thread(buffer).run();
     }
 
+    public void parameterSetConfirmation(int paramSetId, MNCAddress receiver){
+        if(retransmitionBuffer.containsKey(paramSetId)){
+            retransmitionBuffer.get(paramSetId).parameterSetConfirmation(receiver);
+        }
+    }
+
     private class TokenRetransmitionBuffer implements Runnable {
         private MNCDeviceParameterSet data;
         private TreeSet<MNCAddress> notConfirmed;
         private MNCDevice mySender;
+
         public TokenRetransmitionBuffer(MNCDeviceParameterSet set, TreeSet<MNCAddress> devices, MNCDevice sender){
             notConfirmed = devices;
             data = set;
             mySender = sender;
+        }
+
+        public synchronized void parameterSetConfirmation(MNCAddress receiver){
+            if(notConfirmed.contains(receiver))
+                notConfirmed.remove(receiver);
         }
 
         @Override
@@ -83,6 +98,8 @@ public class MNCToken implements Serializable {
                         e.printStackTrace();
                     }
                 }
+                if(notConfirmed.size() <= 0)
+                    break;
             }
             retransmitionBuffer.remove(data.getParameterSetID());
         }

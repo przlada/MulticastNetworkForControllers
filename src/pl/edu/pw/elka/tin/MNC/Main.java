@@ -6,25 +6,17 @@ import pl.edu.pw.elka.tin.MNC.MNCController.MNCController;
 import pl.edu.pw.elka.tin.MNC.MNCController.MNCDevice;
 import pl.edu.pw.elka.tin.MNC.MNCController.MNCMonitor;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDatagram;
-import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameter;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameterSet;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.Hashtable;
 import java.util.Scanner;
 
 
 public class Main {
 
     public static void main(String[] args) throws SocketException{
-        Hashtable<Integer, String> tree = new Hashtable<Integer, String>();
-        tree.put(1,"dziala");
-        tree.put(2,"dziala");
-        System.out.println(tree.size());
-
-
         NetworkInterface netint = NetworkInterface.getByName(MNCConsts.DEFAULT_INTERFACE_NAME);
         InetAddress inetAddress = netint.getInterfaceAddresses().get(0).getAddress();
         MNCAddress myAddress;
