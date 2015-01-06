@@ -20,7 +20,7 @@ public interface MNCConsts {
 
     public static final int PARAMETER_SET_SIZE = 4;
     public static final int MAX_RETRANSMITION_NUMBER = 3;
-    public static final int WAIT_FOR_DATA_CONFIRMATION = 5000;
+    public static final int WAIT_FOR_DATA_CONFIRMATION = 10000;
 
     public static final int WAIT_FOR_TOKEN_TIMEOUT = 5000;
     public static final int WAIT_FOR_TMP_TOKEN = 5000;
