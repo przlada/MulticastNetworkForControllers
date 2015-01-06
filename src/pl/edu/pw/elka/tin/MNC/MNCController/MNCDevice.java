@@ -4,7 +4,6 @@ import pl.edu.pw.elka.tin.MNC.MNCAddress;
 import pl.edu.pw.elka.tin.MNC.MNCConstants.MNCConsts;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDatagram;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameter;
-import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameterSet;
 import pl.edu.pw.elka.tin.MNC.MNCSystemLog;
 
 import java.io.*;
@@ -107,7 +106,7 @@ public abstract class MNCDevice implements Serializable{
         if(!receivedParameters.containsKey(group)){
             receivedParameters.put(group, new Hashtable<Integer, Hashtable<Integer, MNCDeviceParameter>>());
         }
-        if(!receivedParameters.get(group).contains(param.getParameterSetId())){
+        if(!receivedParameters.get(group).containsKey(param.getParameterSetId())){
             receivedParameters.get(group).put(param.getParameterSetId(), new Hashtable<Integer, MNCDeviceParameter>());
         }
         receivedParameters.get(group).get(param.getParameterSetId()).put(param.getIndex(),param);
