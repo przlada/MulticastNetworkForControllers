@@ -16,9 +16,12 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) throws SocketException{
-        Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
-        for (NetworkInterface netint : Collections.list(nets))
-            displayInterfaceInformation(netint);
+        NetworkInterface netint = NetworkInterface.getByName("eth0");
+        System.out.printf("Display name: %s\n", netint.getDisplayName());
+        System.out.printf("Name: %s\n", netint.getName());
+        InetAddress inetAddress = netint.getInterfaceAddresses().get(0).getAddress();
+        System.out.printf("InetAddress: %s\n", inetAddress);
+
         String command;
         Scanner in = new Scanner(System.in);
         MNCDict.Langs lang = MNCDict.Langs.PL;
@@ -46,14 +49,4 @@ public class Main {
 
 
     }
-
-    static void displayInterfaceInformation(NetworkInterface netint) throws SocketException {
-        System.out.printf("Display name: %s\n", netint.getDisplayName());
-        System.out.printf("Name: %s\n", netint.getName());
-        Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
-        InetAddress inetAddress = netint.getInterfaceAddresses().get(0).getAddress();
-        System.out.printf("InetAddress: %s\n", inetAddress);
-        System.out.printf("\n");
-    }
-
 }
