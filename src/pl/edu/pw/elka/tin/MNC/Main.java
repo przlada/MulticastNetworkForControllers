@@ -51,9 +51,8 @@ public class Main {
         System.out.printf("Display name: %s\n", netint.getDisplayName());
         System.out.printf("Name: %s\n", netint.getName());
         Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
-        for (InetAddress inetAddress : Collections.list(inetAddresses)) {
-            System.out.printf("InetAddress: %s\n", inetAddress);
-        }
+        InetAddress inetAddress = netint.getInterfaceAddresses().get(0).getAddress();
+        System.out.printf("InetAddress: %s\n", inetAddress);
         System.out.printf("\n");
     }
 
