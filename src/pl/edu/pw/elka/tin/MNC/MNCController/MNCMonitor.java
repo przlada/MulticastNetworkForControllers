@@ -45,6 +45,13 @@ public class MNCMonitor extends MNCDevice {
         }
     }
 
+    public synchronized int receiveUnicastData(MNCDatagram datagram){
+        log.acction("odebrano "+datagram.toString());
+        switch (datagram.getType()){
+        }
+        return 0;
+    }
+
     protected void checkTokenOwners(){
         for (String group : myGroups) {
             if(tokensOwners.contains(group) == false){

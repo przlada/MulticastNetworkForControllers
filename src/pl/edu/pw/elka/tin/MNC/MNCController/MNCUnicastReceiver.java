@@ -37,23 +37,22 @@ public class MNCUnicastReceiver implements Runnable{
                 System.out.println("Accept failed: 4444");
             }
         }
-
     }
 
     private class ClientWorker implements Runnable {
         private Socket client;
 
-        ClientWorker(Socket client) {
+        public ClientWorker(Socket client) {
             this.client = client;
         }
 
         public void run(){
-            String line;
-            ObjectInputStream in = null;
             try{
-                in  = new ObjectInputStream(client.getInputStream());
+                ObjectInputStream in  = new ObjectInputStream(client.getInputStream());
+                ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream());
                 MNCDatagram sendDatagram = (MNCDatagram) in.readObject();
-                myDevice.log.acction("odebrano unicast "+sendDatagram);
+                int id = myDevice.receiveUnicastData(sendDatagram);
+                out.writeObject(id);
                 client.close();
             } catch (IOException e) {
                 System.out.println("in or out failed");

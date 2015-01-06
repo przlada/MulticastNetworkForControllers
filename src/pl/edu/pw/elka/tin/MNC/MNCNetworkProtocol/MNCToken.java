@@ -43,4 +43,8 @@ public class MNCToken implements Serializable {
             text+=i.toString()+ MNCConsts.LOCAL_LINE_SEPARATOR;
         return text;
     }
+    public int getNextDataId(){
+        lastDataId+=1;
+        return lastDataId;
+    }
 }

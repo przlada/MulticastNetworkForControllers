@@ -71,6 +71,8 @@ public abstract class MNCDevice implements Serializable{
 
     public abstract void receiveDatagram(MNCDatagram datagram);
 
+    public abstract int receiveUnicastData(MNCDatagram datagram);
+
     public synchronized void sendDatagram(MNCDatagram d) throws IOException {
         byte data[] = MNCDatagram.toByteArray(d);
         DatagramPacket packet = new DatagramPacket(data, data.length, MNCConsts.MULTICAST_ADDR.getJavaAddress(), MNCConsts.MCAST_PORT);
@@ -82,14 +84,19 @@ public abstract class MNCDevice implements Serializable{
         try{
             Socket socket = new Socket(d.getReceiver().getJavaAddress(), MNCConsts.UCAST_PORT);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in  = new ObjectInputStream(socket.getInputStream());
             out.writeObject(d);
             log.acction("wyslano unicast: "+d);
+            int id = (Integer) in.readObject();
+            log.acction("nadano id: "+id);
             socket.close();
         } catch (UnknownHostException e) {
             System.out.println("Unknown host: kq6py");
         } catch  (IOException e) {
             System.out.println("No I/O");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
-}
+    }
     protected abstract void checkTokenOwners();
 }

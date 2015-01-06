@@ -16,8 +16,9 @@ import java.util.TreeMap;
  * @author Paweł
  */
 public class MNCController extends MNCDevice {
-    private TreeMap<String, MNCToken> tokens;
     protected TreeMap<String, MNCControllerTokenGetter> tokenOwnerGetters;
+    private TreeMap<String, MNCToken> tokens;
+
 
     public MNCController(String name, MNCAddress addr, MNCSystemLog log) throws SocketException, UnknownHostException {
         super(name, addr, log);
@@ -80,7 +81,21 @@ public class MNCController extends MNCDevice {
                         e.printStackTrace();
                     }
                 }
+                break;
         }
+    }
+
+    public synchronized int receiveUnicastData(MNCDatagram datagram){
+        log.acction("odebrano "+datagram.toString());
+        switch (datagram.getType()){
+            case DATA_FULL:
+                MNCToken token = tokens.get(datagram.getGroup());
+                if(token != null) {
+                    return token.getNextDataId();
+                }
+                break;
+        }
+        return 0;
     }
 
     protected void checkTokenOwners(){
