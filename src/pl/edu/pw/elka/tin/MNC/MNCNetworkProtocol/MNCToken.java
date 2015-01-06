@@ -74,7 +74,7 @@ public class MNCToken implements Serializable {
 
         @Override
         public void run() {
-            for(int i=0; i<1; i++){
+            for(int i=0; i<MNCConsts.MAX_RETRANSMITION_NUMBER; i++){
                 for(int j=0; j<MNCConsts.PARAMETER_SET_SIZE; j++){
                     MNCDatagram datagram = new MNCDatagram(mySender.getMyAddress(), MNCConsts.MULTICAST_ADDR, group, MNCDatagram.TYPE.DATA_FRAGMENT, data.getParameters()[j]);
                     try {
