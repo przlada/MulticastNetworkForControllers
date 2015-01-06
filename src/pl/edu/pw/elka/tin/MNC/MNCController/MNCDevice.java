@@ -111,7 +111,8 @@ public abstract class MNCDevice implements Serializable{
             receivedParameters.get(group).put(param.getParameterSetId(), new Hashtable<Integer, MNCDeviceParameter>());
         }
         receivedParameters.get(group).get(param.getParameterSetId()).put(param.getIndex(),param);
-        System.out.println(param.getText()+" : "+param.getIndex());
+        System.out.println(param.getText()+" : "+param.getIndex()+" : "+receivedParameters.get(group).get(param.getParameterSetId()).size());
+
         if(receivedParameters.get(group).get(param.getParameterSetId()).size() >= MNCConsts.PARAMETER_SET_SIZE) {
             return true;
         }
