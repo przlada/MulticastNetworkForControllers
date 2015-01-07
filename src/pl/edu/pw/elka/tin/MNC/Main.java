@@ -11,6 +11,7 @@ import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameterSet;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.util.Enumeration;
 import java.util.Scanner;
 
 
@@ -18,6 +19,12 @@ public class Main {
 
     public static void main(String[] args) throws SocketException{
         NetworkInterface netint = NetworkInterface.getByName(MNCConsts.DEFAULT_INTERFACE_NAME);
+        Enumeration addresses = netint.getInetAddresses();
+        while (addresses.hasMoreElements()) {
+            InetAddress inetAddress = (InetAddress)addresses.nextElement();
+            System.out.println(inetAddress);
+        }
+
         InetAddress inetAddress = netint.getInterfaceAddresses().get(0).getAddress();
         System.out.println(inetAddress.getHostAddress());
         MNCAddress myAddress;
