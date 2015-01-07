@@ -86,8 +86,16 @@ public class MNCController extends MNCDevice {
                 break;
             case DATA_FRAGMENT:
                 if(getGroups().contains(datagram.getGroup())){
-                    if(receiveParameter(datagram.getGroup(), (MNCDeviceParameter)datagram.getData())){
-                        dataConsumption(datagram.getGroup(), ((MNCDeviceParameter)datagram.getData()).getParameterSetId());
+                    if(!consumedParametersSets.containsKey(datagram.getGroup()) || !consumedParametersSets.get(datagram.getGroup()).contains(((MNCDeviceParameter)datagram.getData()).getParameterSetId())){
+                        if(receiveParameter(datagram.getGroup(), (MNCDeviceParameter)datagram.getData())) {
+                            if(dataConsumption(datagram.getGroup(), ((MNCDeviceParameter) datagram.getData()).getParameterSetId())){
+                                try {
+                                    sendDatagram(new MNCDatagram(getMyAddress(), MNCConsts.MULTICAST_ADDR, datagram.getGroup(), MNCDatagram.TYPE.CONSUMPTION_CONFIRMATION, ((MNCDeviceParameter)datagram.getData()).getParameterSetId()));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
                     }
                 }
                 break;
@@ -112,6 +120,11 @@ public class MNCController extends MNCDevice {
                     return id;
                 }
                 break;
+            case GET_TOKEN:
+                if(getGroups().contains(datagram.getGroup())){
+                    tokens.put(datagram.getGroup(), (MNCToken)datagram.getData());
+                    return 1;
+                }
         }
         return 0;
     }
@@ -124,6 +137,17 @@ public class MNCController extends MNCDevice {
                 tokenOwnerGetters.put(group, tokenGetter);
                 new Thread(tokenGetter).start();
             }
+        }
+    }
+
+    public synchronized void transferToken(String group){
+        MNCToken token = tokens.get(group);
+        MNCAddress nextOwner = token.getNextController(getMyAddress());
+        if(nextOwner != null) {
+            tokens.remove(group);
+            token.clearBeforeTransmition();
+            MNCDatagram data = new MNCDatagram(getMyAddress(), nextOwner, group, MNCDatagram.TYPE.GET_TOKEN, token);
+            sendUnicastDatagram(data);
         }
     }
 

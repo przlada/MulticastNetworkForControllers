@@ -29,6 +29,18 @@ public class MNCToken implements Serializable {
         retransmitionBuffer = new Hashtable<Integer, TokenRetransmitionBuffer>();
     }
 
+    private synchronized void incrementBroadcastCounter(){
+        broadcastCounter+=1;
+        if(broadcastCounter > MNCConsts.MAX_RETRANSMITION_NUMBER){
+
+        }
+    }
+
+    public void clearBeforeTransmition(){
+        retransmitionBuffer.clear();
+        broadcastCounter = 0;
+    }
+
     public void addDevice(MNCAddress address){
         devicesInGroup.add(address);
     }
@@ -105,9 +117,9 @@ public class MNCToken implements Serializable {
                 }
                 if(notConfirmed.size() <= 0)
                     break;
-
             }
             retransmitionBuffer.remove(data.getParameterSetID());
+            incrementBroadcastCounter();
         }
     }
 }

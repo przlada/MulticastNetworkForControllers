@@ -50,6 +50,10 @@ public class Main {
                         MNCDatagram data = new MNCDatagram(myAddress,device.getTokensOwners().get(command),command, MNCDatagram.TYPE.DATA_FULL,paramSet);
                         device.sendUnicastDatagram(data);
                     }
+                    else if(command.equals("transfer")){
+                        command = in.nextLine();
+                        ((MNCController) device).transferToken(command);
+                    }
                 }
             }
         } catch (java.io.IOException e) {
