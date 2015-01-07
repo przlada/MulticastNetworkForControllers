@@ -8,6 +8,7 @@ import pl.edu.pw.elka.tin.MNC.MNCController.MNCMonitor;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDatagram;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameterSet;
 
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -20,12 +21,18 @@ public class Main {
     public static void main(String[] args) throws SocketException{
         NetworkInterface netint = NetworkInterface.getByName(MNCConsts.DEFAULT_INTERFACE_NAME);
         Enumeration addresses = netint.getInetAddresses();
+        InetAddress inetAddress = null;
         while (addresses.hasMoreElements()) {
-            InetAddress inetAddress = (InetAddress)addresses.nextElement();
-            System.out.println(inetAddress);
+            InetAddress addr = (InetAddress)addresses.nextElement();
+            if(addr instanceof Inet6Address)
+                if(!addr.isLinkLocalAddress()){
+                    inetAddress = addr;
+                    break;
+                }
         }
-
-        InetAddress inetAddress = netint.getInterfaceAddresses().get(0).getAddress();
+        if(inetAddress == null){
+            inetAddress = netint.getInterfaceAddresses().get(0).getAddress();
+        }
         System.out.println(inetAddress.getHostAddress());
         MNCAddress myAddress;
         String command;
