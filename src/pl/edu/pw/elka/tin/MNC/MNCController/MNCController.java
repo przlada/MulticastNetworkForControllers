@@ -31,7 +31,9 @@ public class MNCController extends MNCDevice {
     }
 
     public void addToken(String group){
-        tokens.put(group,new MNCToken(group));
+        MNCToken token = new MNCToken(group);
+        token.addDevice(getMyAddress());
+        tokens.put(group,token);
         tokensOwners.put(group, getMyAddress());
     }
     public MNCToken getToken(String group){
@@ -49,7 +51,9 @@ public class MNCController extends MNCDevice {
                 token.addDevice(datagram.getSender());
         }
         else if(datagram.getType() == IS_THERE_TOKEN) {
-            if(tokens.containsKey(datagram.getGroup())) {
+            MNCToken token = tokens.get(datagram.getGroup());
+            if(token != null) {
+                token.addDevice(datagram.getSender());
                 MNCDatagram iHaveToken = new MNCDatagram(getMyAddress(), MNCConsts.MULTICAST_ADDR, datagram.getGroup(), MNCDatagram.TYPE.I_HAVE_TOKEN, null);
                 try {
                     sendDatagram(iHaveToken);
