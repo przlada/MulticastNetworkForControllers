@@ -123,6 +123,12 @@ public class MNCController extends MNCDevice {
             case GET_TOKEN:
                 if(getGroups().contains(datagram.getGroup())){
                     tokens.put(datagram.getGroup(), (MNCToken)datagram.getData());
+                    MNCDatagram iHaveToken = new MNCDatagram(getMyAddress(), MNCConsts.MULTICAST_ADDR, datagram.getGroup(), MNCDatagram.TYPE.I_HAVE_TOKEN, null);
+                    try {
+                        sendDatagram(iHaveToken);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     return 1;
                 }
         }
