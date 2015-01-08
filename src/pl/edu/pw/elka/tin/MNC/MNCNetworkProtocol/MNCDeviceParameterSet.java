@@ -14,6 +14,7 @@ public class MNCDeviceParameterSet implements Serializable{
     private MNCDeviceParameter[] parameters;
 
     public MNCDeviceParameterSet(){
+        parameterSetID = 0;
         parameters = new MNCDeviceParameter[MNCConsts.PARAMETER_SET_SIZE];
     }
     public MNCDeviceParameterSet(Hashtable<Integer, MNCDeviceParameter> table){
@@ -36,7 +37,8 @@ public class MNCDeviceParameterSet implements Serializable{
     public void setParameterSetID(int id){
         parameterSetID = id;
         for(MNCDeviceParameter param : parameters){
-            param.setParameterSetId(id);
+            if(param != null)
+                param.setParameterSetId(id);
         }
     }
 

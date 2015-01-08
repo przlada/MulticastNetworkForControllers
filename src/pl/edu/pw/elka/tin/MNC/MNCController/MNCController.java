@@ -125,9 +125,13 @@ public class MNCController extends MNCDevice {
             case DATA_FULL:
                 MNCToken token = tokens.get(datagram.getGroup());
                 if(token != null) {
-                    int id = token.getNextDataId();
                     MNCDeviceParameterSet paramSet = (MNCDeviceParameterSet)datagram.getData();
-                    paramSet.setParameterSetID(id);
+                    int id = paramSet.getParameterSetID();
+                    if(id == 0) {
+                        id = token.getNextDataId();
+                        paramSet.setParameterSetID(id);
+                        log.actionDataReBroadcast(datagram);
+                    }
                     token.addParameterSetToTransmit(paramSet, this);
                     return id;
                 }
@@ -135,6 +139,7 @@ public class MNCController extends MNCDevice {
             case GET_TOKEN:
                 if(getGroups().contains(datagram.getGroup())){
                     tokens.put(datagram.getGroup(), (MNCToken)datagram.getData());
+                    log.actionReceivedToken((MNCToken)datagram.getData());
                     MNCDatagram iHaveToken = new MNCDatagram(getMyAddress(), MNCConsts.MULTICAST_ADDR, datagram.getGroup(), MNCDatagram.TYPE.I_HAVE_TOKEN, null);
                     try {
                         sendDatagram(iHaveToken);

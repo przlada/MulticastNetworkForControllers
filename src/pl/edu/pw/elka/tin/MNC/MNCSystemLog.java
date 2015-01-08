@@ -3,6 +3,7 @@ package pl.edu.pw.elka.tin.MNC;
 import pl.edu.pw.elka.tin.MNC.MNCController.MNCDevice;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDatagram;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameterSet;
+import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCToken;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -70,6 +71,14 @@ public class MNCSystemLog {
 
     public void actionDataAlreadyConsumed(MNCDatagram data){
         print(getLangText(lang,"DataAlreadyConsumed")+data);
+    }
+
+    public void actionDataReBroadcast(MNCDatagram data){
+        print(getLangText(lang,"DataReBroadcast")+data);
+    }
+
+    public void actionReceivedToken(MNCToken token){
+        print(getLangText(lang,"ReceivedToken")+token);
     }
 
     public void actionSendDatagram(MNCDatagram datagram){
