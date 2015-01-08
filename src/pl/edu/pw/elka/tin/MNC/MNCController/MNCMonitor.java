@@ -39,7 +39,6 @@ public class MNCMonitor extends MNCDevice {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                log.actionSendDatagram(send);
             }
         }
         else if(datagram.getType() == MNCDatagram.TYPE.DATA_FRAGMENT){

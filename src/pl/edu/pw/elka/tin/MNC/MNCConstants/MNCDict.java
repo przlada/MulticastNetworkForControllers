@@ -30,6 +30,9 @@ public class MNCDict {
         PLDict.put("ReceiveFromUnicast", "Odebrano UCAST:");
         PLDict.put("DataConsumption", "Soknsumowano dane:");
         PLDict.put("SendByUnicast", "Wysłano UCAST:");
+        PLDict.put("AddedNewDeviceToGroup", "Dodano nowe urządzenie grupa:");
+        PLDict.put("DataAlreadyConsumed", "Dane już skonsumowane:");
+
 
         Dicts.put(Langs.PL, PLDict);
     }

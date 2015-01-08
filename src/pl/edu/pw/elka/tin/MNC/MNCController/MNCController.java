@@ -48,8 +48,10 @@ public class MNCController extends MNCDevice {
 
         if(datagram.getType() == IAM_IN_GROUP){
             MNCToken token = tokens.get(datagram.getGroup());
-            if(token != null)
+            if(token != null) {
                 token.addDevice(datagram.getSender());
+                log.actionAddedNewDevice(datagram.getGroup(), datagram.getSender());
+            }
         }
         else if(datagram.getType() == IS_THERE_TOKEN) {
             MNCToken token = tokens.get(datagram.getGroup());
@@ -81,6 +83,7 @@ public class MNCController extends MNCDevice {
                 tokenOwnerGetters.get(datagram.getGroup()).foundToken();
             }
             tokensOwners.put(datagram.getGroup(),datagram.getSender());
+            log.actionNewTokenOwner(datagram.getGroup());
         }
         else if(datagram.getType() == WHO_IN_GROUP) {
             if(getGroups().contains(datagram.getGroup())){
@@ -104,12 +107,15 @@ public class MNCController extends MNCDevice {
                         }
                     }
                 }
+                else{
+                    log.actionDataAlreadyConsumed(datagram);
+                }
             }
         }
         else if(datagram.getType() == CONSUMPTION_CONFIRMATION) {
-            MNCToken token2 = tokens.get(datagram.getGroup());
-            if(token2 != null)
-                token2.parameterSetConfirmation((Integer)datagram.getData(), datagram.getSender());
+            MNCToken token = tokens.get(datagram.getGroup());
+            if(token != null)
+                token.parameterSetConfirmation((Integer) datagram.getData(), datagram.getSender());
         }
     }
 

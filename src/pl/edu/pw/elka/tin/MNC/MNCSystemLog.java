@@ -63,6 +63,15 @@ public class MNCSystemLog {
     public void actionReceiveDatagram(MNCDatagram datagram){
         print(getLangText(lang,"ReceiveFromMulticast")+datagram);
     }
+
+    public void actionAddedNewDevice(String group, MNCAddress address){
+        print(getLangText(lang,"AddedNewDeviceToGroup")+group+" "+address);
+    }
+
+    public void actionDataAlreadyConsumed(MNCDatagram data){
+        print(getLangText(lang,"DataAlreadyConsumed")+data);
+    }
+
     public void actionSendDatagram(MNCDatagram datagram){
         print(getLangText(lang,"SendByMulticast")+datagram);
     }
