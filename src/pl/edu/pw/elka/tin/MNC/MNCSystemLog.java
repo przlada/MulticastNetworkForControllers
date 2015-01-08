@@ -2,6 +2,7 @@ package pl.edu.pw.elka.tin.MNC;
 
 import pl.edu.pw.elka.tin.MNC.MNCController.MNCDevice;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDatagram;
+import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameterSet;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -51,11 +52,18 @@ public class MNCSystemLog {
     public void actionNewTokenOwner(String group){
         print(getLangText(lang,"HaveNewTokenOwner")+group+" "+device.getTokensOwners().get(group));
     }
+    public void actionReceiveUnicastDatagram(MNCDatagram datagram){
+        print(getLangText(lang,"ReceiveFromUnicast")+datagram);
+    }
 
     public void actionReceiveDatagram(MNCDatagram datagram){
         print(getLangText(lang,"ReceiveFromMulticast")+datagram);
     }
     public void actionSendDatagram(MNCDatagram datagram){
         print(getLangText(lang,"SendByMulticast")+datagram);
+    }
+
+    public void dataConsumption(MNCDeviceParameterSet set){
+        print(getLangText(lang,"DataConsumption")+set.getParameterSetID());
     }
 }

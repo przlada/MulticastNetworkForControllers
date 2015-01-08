@@ -43,7 +43,7 @@ public class MNCController extends MNCDevice {
     public synchronized void receiveDatagram(MNCDatagram datagram) {
         if(datagram.getSender().equals(getMyAddress()))
             return;
-        //log.acction("odebrano "+datagram.toString());
+
         log.actionReceiveDatagram(datagram);
 
         if(datagram.getType() == IAM_IN_GROUP){
@@ -111,78 +111,10 @@ public class MNCController extends MNCDevice {
             if(token2 != null)
                 token2.parameterSetConfirmation((Integer)datagram.getData(), datagram.getSender());
         }
-        /*
-
-        switch (datagram.getType()){
-            case IAM_IN_GROUP:
-                MNCToken token = tokens.get(datagram.getGroup());
-                if(token != null)
-                    token.addDevice(datagram.getSender());
-                break;
-            case IS_THERE_TOKEN:
-                if(tokens.containsKey(datagram.getGroup())) {
-                    MNCDatagram iHaveToken = new MNCDatagram(getMyAddress(), MNCConsts.MULTICAST_ADDR, datagram.getGroup(), MNCDatagram.TYPE.I_HAVE_TOKEN, null);
-                    try {
-                        sendDatagram(iHaveToken);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                break;
-            case I_HAVE_TMP_TOKEN:
-                if(tokens.containsKey(datagram.getGroup())){
-                    MNCDatagram iHaveToken = new MNCDatagram(getMyAddress(), MNCConsts.MULTICAST_ADDR, datagram.getGroup(), MNCDatagram.TYPE.I_HAVE_TOKEN, null);
-                    try {
-                        sendDatagram(iHaveToken);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                else if(tokenOwnerGetters.containsKey(datagram.getGroup())){
-                    tokenOwnerGetters.get(datagram.getGroup()).foundTmpToken(datagram.getSender());
-                }
-                break;
-            case I_HAVE_TOKEN:
-                if(tokenOwnerGetters.containsKey(datagram.getGroup())){
-                    tokenOwnerGetters.get(datagram.getGroup()).foundToken();
-                }
-                tokensOwners.put(datagram.getGroup(),datagram.getSender());
-                break;
-            case WHO_IN_GROUP:
-                if(getGroups().contains(datagram.getGroup())){
-                    try {
-                        sendDatagram(new MNCDatagram(getMyAddress(), MNCConsts.MULTICAST_ADDR, datagram.getGroup(), MNCDatagram.TYPE.IAM_IN_GROUP, null));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                break;
-            case DATA_FRAGMENT:
-                if(getGroups().contains(datagram.getGroup())){
-                    if(!consumedParametersSets.containsKey(datagram.getGroup()) || !consumedParametersSets.get(datagram.getGroup()).contains(((MNCDeviceParameter)datagram.getData()).getParameterSetId())){
-                        if(receiveParameter(datagram.getGroup(), (MNCDeviceParameter)datagram.getData())) {
-                            if(dataConsumption(datagram.getGroup(), ((MNCDeviceParameter) datagram.getData()).getParameterSetId())){
-                                try {
-                                    sendDatagram(new MNCDatagram(getMyAddress(), MNCConsts.MULTICAST_ADDR, datagram.getGroup(), MNCDatagram.TYPE.CONSUMPTION_CONFIRMATION, ((MNCDeviceParameter)datagram.getData()).getParameterSetId()));
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
-                }
-                break;
-            case CONSUMPTION_CONFIRMATION:
-                MNCToken token2 = tokens.get(datagram.getGroup());
-                if(token2 != null)
-                    token2.parameterSetConfirmation((Integer)datagram.getData(), datagram.getSender());
-                break;
-        }
-        */
     }
 
     public synchronized int receiveUnicastData(MNCDatagram datagram){
-        log.acction("odebrano "+datagram.toString());
+        log.actionReceiveUnicastDatagram(datagram);
         switch (datagram.getType()){
             case DATA_FULL:
                 MNCToken token = tokens.get(datagram.getGroup());

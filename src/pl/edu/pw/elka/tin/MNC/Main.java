@@ -5,7 +5,6 @@ import pl.edu.pw.elka.tin.MNC.MNCConstants.MNCDict;
 import pl.edu.pw.elka.tin.MNC.MNCController.MNCController;
 import pl.edu.pw.elka.tin.MNC.MNCController.MNCDevice;
 import pl.edu.pw.elka.tin.MNC.MNCController.MNCMonitor;
-import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDatagram;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameterSet;
 
 import java.net.Inet6Address;
@@ -61,8 +60,7 @@ public class Main {
                         command = in.nextLine();
                         MNCDeviceParameterSet paramSet = new MNCDeviceParameterSet();
                         paramSet.populateSet();
-                        MNCDatagram data = new MNCDatagram(myAddress,device.getTokensOwners().get(command),command, MNCDatagram.TYPE.DATA_FULL,paramSet);
-                        device.sendUnicastDatagram(data);
+                        device.sendParameterSet(command, paramSet);
                     }
                     else if(command.equals("transfer")){
                         command = in.nextLine();

@@ -4,6 +4,7 @@ import pl.edu.pw.elka.tin.MNC.MNCAddress;
 import pl.edu.pw.elka.tin.MNC.MNCConstants.MNCConsts;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDatagram;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameter;
+import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameterSet;
 import pl.edu.pw.elka.tin.MNC.MNCSystemLog;
 
 import java.io.*;
@@ -84,7 +85,7 @@ public abstract class MNCDevice implements Serializable{
         log.actionSendDatagram(d);
     }
 
-    public void sendUnicastDatagram(MNCDatagram d){
+    public int sendUnicastDatagram(MNCDatagram d){
         try{
             Socket socket = new Socket(d.getReceiver().getJavaAddress(), MNCConsts.UCAST_PORT);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
@@ -94,6 +95,7 @@ public abstract class MNCDevice implements Serializable{
             int id = (Integer) in.readObject();
             log.acction("odebrano id: "+id);
             socket.close();
+            return id;
         } catch (UnknownHostException e) {
             System.out.println("Unknown host: kq6py");
         } catch  (IOException e) {
@@ -101,6 +103,13 @@ public abstract class MNCDevice implements Serializable{
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+        return 0;
+    }
+
+    public void sendParameterSet(String group, MNCDeviceParameterSet set){
+        MNCDatagram data = new MNCDatagram(myAddress,getTokensOwners().get(group),group, MNCDatagram.TYPE.DATA_FULL,set);
+        int id = sendUnicastDatagram(data);
+        set.setParameterSetID(id);
     }
 
     public boolean receiveParameter(String group, MNCDeviceParameter param){
@@ -120,12 +129,11 @@ public abstract class MNCDevice implements Serializable{
     public boolean dataConsumption(String group, int paramSetId){
         Hashtable<Integer, Hashtable<Integer, MNCDeviceParameter>> set = receivedParameters.get(group);
         if(set != null){
-            Hashtable<Integer, MNCDeviceParameter> parameters = set.get(paramSetId);
             if(!consumedParametersSets.containsKey(group))
                 consumedParametersSets.put(group, new HashSet<Integer>());
             consumedParametersSets.get(group).add(paramSetId);
-            set.remove(paramSetId);
-            log.acction("skonsumowano dane grupy "+group+" id: "+paramSetId);
+            MNCDeviceParameterSet parameterSet = new MNCDeviceParameterSet(set.remove(paramSetId));
+            log.dataConsumption(parameterSet);
             return true;
         }
         return false;

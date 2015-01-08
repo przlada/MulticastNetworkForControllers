@@ -3,6 +3,7 @@ package pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol;
 import pl.edu.pw.elka.tin.MNC.MNCConstants.MNCConsts;
 
 import java.io.Serializable;
+import java.util.Hashtable;
 
 /**
  * Klasa reprezentująca cały zestaw parametrów danego sterownika
@@ -14,6 +15,18 @@ public class MNCDeviceParameterSet implements Serializable{
 
     public MNCDeviceParameterSet(){
         parameters = new MNCDeviceParameter[MNCConsts.PARAMETER_SET_SIZE];
+    }
+    public MNCDeviceParameterSet(Hashtable<Integer, MNCDeviceParameter> table){
+        this();
+        int i=0;
+        for(MNCDeviceParameter param : table.values()){
+            parameters[i] = param;
+            if(i ==0)
+                parameterSetID =  param.getParameterSetId();
+            i++;
+            if(i>=MNCConsts.PARAMETER_SET_SIZE)
+                break;
+        }
     }
 
     public int getParameterSetID(){
@@ -35,4 +48,5 @@ public class MNCDeviceParameterSet implements Serializable{
             parameters[i] = new MNCDeviceParameter(i,MNCDeviceParameter.TYPE.TEXT,"parametr"+i);
         }
     }
+
 }
