@@ -117,7 +117,7 @@ public class MNCToken implements Serializable {
                     e.printStackTrace();
                 }
                 System.out.println(notConfirmed.size());
-                if(notConfirmed.size() <= 0)
+                if(notConfirmed.size() <= 1)
                     break;
             }
             retransmitionBuffer.remove(data.getParameterSetID());
