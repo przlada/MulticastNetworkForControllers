@@ -53,7 +53,11 @@ public class MNCGuiManager {
         text_panel = new JTextPane();
         text_panel.setEditable(false);
         text_panel.setContentType("text/html");
-        text_panel.setText("<html><table><tr><td>A line of text</td></tr><tr><td>Another line of text</td></tr></table></html>");
+        text_panel.setText("<html>" +
+                "<head><style>body{margin:0; padding: 0; font-family: \"Courier New\", Courier, monospace; font-size: 11px;}" +
+                ".log{padding: 2px 0 0 0; margin: 0 0 1px 0; height: 16px; background-color: #0099FF;}" +
+                ".log-send{padding: 2px 0 0 0; margin: 0 0 1px 0; height: 16px; background-color: #00FF66;}</style></head>" +
+                "<body><div class=\"log\">text1</div><div class=\"log\">text2</div></body></html>");
         doc = (HTMLDocument)text_panel.getStyledDocument();
         scrollPane = new JScrollPane(text_panel);
 
@@ -71,9 +75,9 @@ public class MNCGuiManager {
 
     public void run() {
         while (true) {
-            Element e = doc.getElement(doc.getDefaultRootElement(), StyleConstants.NameAttribute, HTML.Tag.TABLE);
+            Element e = doc.getElement(doc.getDefaultRootElement(), StyleConstants.NameAttribute, HTML.Tag.BODY);
             try {
-                doc.insertBeforeEnd(e, "<tr><td>"+Math.random()+"</td></tr>");
+                doc.insertBeforeEnd(e, "<div class=\"log-send\">"+Math.random()+"</div>");
             } catch (BadLocationException e1) {
                 e1.printStackTrace();
             } catch (IOException e1) {
