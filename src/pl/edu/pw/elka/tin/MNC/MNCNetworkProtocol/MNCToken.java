@@ -78,8 +78,8 @@ public class MNCToken implements Serializable {
     }
 
     public void parameterSetConfirmation(int paramSetId, MNCAddress receiver){
-        System.out.println("Confirmed "+paramSetId+" "+receiver);
         if(retransmitionBuffer.containsKey(paramSetId)){
+            System.out.println("Confirmed "+paramSetId+" "+receiver);
             retransmitionBuffer.get(paramSetId).parameterSetConfirmation(receiver);
         }
     }
@@ -116,6 +116,7 @@ public class MNCToken implements Serializable {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                System.out.println(notConfirmed.size());
                 if(notConfirmed.size() <= 0)
                     break;
             }
