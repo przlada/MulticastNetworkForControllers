@@ -39,7 +39,8 @@ public class MNCSystemLog {
 
     private void print(String text){
         Date date= new Date();
-        System.out.println(new Timestamp(date.getTime()) + " " + controllerName+ " " + text);
+        //System.out.println(new Timestamp(date.getTime()) + " " + controllerName+ " " + text);
+        System.out.println(controllerName+ " " + text);
     }
 
     public void acction(String type){
