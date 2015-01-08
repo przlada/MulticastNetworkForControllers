@@ -83,7 +83,6 @@ public class MNCGuiManager {
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
-            //textArea.append("" + Math.random() + "\n");
             if (shouldScroll()) {
                 SwingUtilities.invokeLater(new Runnable() {
 
