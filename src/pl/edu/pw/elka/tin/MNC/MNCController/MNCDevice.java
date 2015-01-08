@@ -91,7 +91,6 @@ public abstract class MNCDevice implements Serializable{
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in  = new ObjectInputStream(socket.getInputStream());
             out.writeObject(d);
-            //log.acction("wyslano unicast: "+d);
             log.actionSendUnicastDatagram(d);
             int id = (Integer) in.readObject();
             log.acction("odebrano id: "+id);

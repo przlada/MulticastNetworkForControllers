@@ -151,7 +151,7 @@ public class MNCController extends MNCDevice {
                     return 1;
                 }
         }
-        return 0;
+        return -1;
     }
 
 
@@ -173,7 +173,7 @@ public class MNCController extends MNCDevice {
                 tokens.remove(group);
                 token.clearBeforeTransmition();
                 MNCDatagram data = new MNCDatagram(getMyAddress(), nextOwner, group, MNCDatagram.TYPE.GET_TOKEN, token);
-                if(sendUnicastDatagram(data) == 0){
+                if(sendUnicastDatagram(data) < 0){
                     tokens.put(group, token);
                 }
                 else{
