@@ -78,6 +78,7 @@ public class MNCToken implements Serializable {
     }
 
     public void parameterSetConfirmation(int paramSetId, MNCAddress receiver){
+        System.out.println("Confirmed "+paramSetId+" "+receiver);
         if(retransmitionBuffer.containsKey(paramSetId)){
             retransmitionBuffer.get(paramSetId).parameterSetConfirmation(receiver);
         }
