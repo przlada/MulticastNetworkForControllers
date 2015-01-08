@@ -31,13 +31,7 @@ public class MNCAddress implements Serializable, Comparable<MNCAddress>{
     }
 
     public String toString(){
-        return address;
-    }
-
-    public static enum TYPE {
-        MONITOR,
-        CONTROLLER,
-        MULTICAST_GROUP
+        return address.substring(address.length()-6);
     }
 
     @Override
@@ -56,5 +50,11 @@ public class MNCAddress implements Serializable, Comparable<MNCAddress>{
         if (!address.equals(((MNCAddress)obj).address))
             return false;
         return true;
+    }
+
+    public static enum TYPE {
+        MONITOR,
+        CONTROLLER,
+        MULTICAST_GROUP
     }
 }

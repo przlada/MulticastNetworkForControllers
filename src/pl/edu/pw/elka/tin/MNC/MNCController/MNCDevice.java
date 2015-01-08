@@ -81,7 +81,8 @@ public abstract class MNCDevice implements Serializable{
         byte data[] = MNCDatagram.toByteArray(d);
         DatagramPacket packet = new DatagramPacket(data, data.length, MNCConsts.MULTICAST_ADDR.getJavaAddress(), MNCConsts.MCAST_PORT);
         udpClient.send(packet);
-        log.acction("wyslano "+d.toString());
+        log.actionSendDatagram(d);
+        //log.acction("wyslano "+d.toString());
     }
 
     public void sendUnicastDatagram(MNCDatagram d){
@@ -92,7 +93,7 @@ public abstract class MNCDevice implements Serializable{
             out.writeObject(d);
             log.acction("wyslano unicast: "+d);
             int id = (Integer) in.readObject();
-            log.acction("nadano id: "+id);
+            log.acction("odebrano id: "+id);
             socket.close();
         } catch (UnknownHostException e) {
             System.out.println("Unknown host: kq6py");
