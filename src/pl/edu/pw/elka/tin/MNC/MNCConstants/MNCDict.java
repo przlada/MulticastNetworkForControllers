@@ -29,6 +29,7 @@ public class MNCDict {
         PLDict.put("ReceiveFromMulticast", "Odebrano MCAST:");
         PLDict.put("ReceiveFromUnicast", "Odebrano UCAST:");
         PLDict.put("DataConsumption", "Soknsumowano dane:");
+        PLDict.put("SendByUnicast", "Wysłano UCAST:");
 
         Dicts.put(Langs.PL, PLDict);
     }

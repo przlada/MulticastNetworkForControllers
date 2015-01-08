@@ -56,6 +56,10 @@ public class MNCSystemLog {
         print(getLangText(lang,"ReceiveFromUnicast")+datagram);
     }
 
+    public void actionSendUnicastDatagram(MNCDatagram datagram){
+        print(getLangText(lang,"SendByUnicast")+datagram);
+    }
+
     public void actionReceiveDatagram(MNCDatagram datagram){
         print(getLangText(lang,"ReceiveFromMulticast")+datagram);
     }

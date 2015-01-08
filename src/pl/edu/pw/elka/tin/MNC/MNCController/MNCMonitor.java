@@ -26,7 +26,7 @@ public class MNCMonitor extends MNCDevice {
     public synchronized void receiveDatagram(MNCDatagram datagram) {
         if(datagram.getSender().equals(getMyAddress()))
             return;
-        log.acction("odebrano " + datagram.toString());
+        log.actionReceiveDatagram(datagram);
         if(datagram.getSender().equals(getMyAddress()))
             return;
         switch (datagram.getType()){
