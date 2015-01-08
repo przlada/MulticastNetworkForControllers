@@ -79,7 +79,6 @@ public class MNCToken implements Serializable {
 
     public void parameterSetConfirmation(int paramSetId, MNCAddress receiver){
         if(retransmitionBuffer.containsKey(paramSetId)){
-            System.out.println("Confirmed "+paramSetId+" "+receiver);
             retransmitionBuffer.get(paramSetId).parameterSetConfirmation(receiver);
         }
     }
@@ -93,6 +92,7 @@ public class MNCToken implements Serializable {
             notConfirmed = devices;
             data = set;
             mySender = sender;
+            notConfirmed.remove(sender.getMyAddress());
         }
 
         public synchronized void parameterSetConfirmation(MNCAddress receiver){
@@ -102,6 +102,11 @@ public class MNCToken implements Serializable {
 
         @Override
         public void run() {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             for(int i=0; i<MNCConsts.MAX_RETRANSMITION_NUMBER; i++){
                 for(int j=0; j<MNCConsts.PARAMETER_SET_SIZE; j++){
                     MNCDatagram datagram = new MNCDatagram(mySender.getMyAddress(), MNCConsts.MULTICAST_ADDR, group, MNCDatagram.TYPE.DATA_FRAGMENT, data.getParameters()[j]);
@@ -116,8 +121,7 @@ public class MNCToken implements Serializable {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                System.out.println(notConfirmed.size());
-                if(notConfirmed.size() <= 1)
+                if(notConfirmed.size() <= 0)
                     break;
             }
             retransmitionBuffer.remove(data.getParameterSetID());
