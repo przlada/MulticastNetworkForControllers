@@ -53,7 +53,7 @@ public class MNCSystemLog {
     }
 
     public void actionReceiveDatagram(MNCDatagram datagram){
-
+        print(getLangText(lang,"ReceiveFromMulticast")+datagram);
     }
     public void actionSendDatagram(MNCDatagram datagram){
         print(getLangText(lang,"SendByMulticast")+datagram);

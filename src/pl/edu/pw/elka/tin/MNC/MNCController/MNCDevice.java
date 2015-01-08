@@ -82,7 +82,6 @@ public abstract class MNCDevice implements Serializable{
         DatagramPacket packet = new DatagramPacket(data, data.length, MNCConsts.MULTICAST_ADDR.getJavaAddress(), MNCConsts.MCAST_PORT);
         udpClient.send(packet);
         log.actionSendDatagram(d);
-        //log.acction("wyslano "+d.toString());
     }
 
     public void sendUnicastDatagram(MNCDatagram d){

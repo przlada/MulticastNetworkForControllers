@@ -26,7 +26,7 @@ public class MNCDict {
         PLDict.put("NoNameController", "brak nazwy");
         PLDict.put("HaveNewTokenOwner", "Ustalono adres sterownika z tokenem grupy:");
         PLDict.put("SendByMulticast", "Wyslano MCAST:");
-
+        PLDict.put("ReceiveFromMulticast", "Odebrano MCAST:");
 
         Dicts.put(Langs.PL, PLDict);
     }

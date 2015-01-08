@@ -43,7 +43,8 @@ public class MNCController extends MNCDevice {
     public synchronized void receiveDatagram(MNCDatagram datagram) {
         if(datagram.getSender().equals(getMyAddress()))
             return;
-        log.acction("odebrano "+datagram.toString());
+        //log.acction("odebrano "+datagram.toString());
+        log.actionReceiveDatagram(datagram);
 
         if(datagram.getType() == IAM_IN_GROUP){
             MNCToken token = tokens.get(datagram.getGroup());

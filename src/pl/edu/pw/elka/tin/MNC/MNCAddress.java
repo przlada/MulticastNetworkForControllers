@@ -33,7 +33,7 @@ public class MNCAddress implements Serializable, Comparable<MNCAddress>{
     public String toString(){
         if(type == TYPE.MULTICAST_GROUP)
             return address.substring(0,4);
-        return address.substring(address.length()-6);
+        return address.substring(address.length()-5);
     }
 
     @Override
