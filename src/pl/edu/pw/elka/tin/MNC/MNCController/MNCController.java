@@ -130,6 +130,8 @@ public class MNCController extends MNCDevice {
                     if(id == 0) {
                         id = token.getNextDataId();
                         paramSet.setParameterSetID(id);
+                    }
+                    else{
                         log.actionDataReBroadcast(datagram);
                     }
                     token.addParameterSetToTransmit(paramSet, this);
@@ -155,7 +157,7 @@ public class MNCController extends MNCDevice {
 
     protected void checkTokenOwners(){
         for (String group : myGroups) {
-            if(tokensOwners.contains(group) == false){
+            if(tokensOwners.contains(group) == false && !tokenOwnerGetters.containsKey(group)){
                 MNCControllerTokenGetter tokenGetter = new MNCControllerTokenGetter(this, group);
                 tokenOwnerGetters.put(group, tokenGetter);
                 new Thread(tokenGetter).start();
@@ -165,12 +167,19 @@ public class MNCController extends MNCDevice {
 
     public synchronized void transferToken(String group){
         MNCToken token = tokens.get(group);
-        MNCAddress nextOwner = token.getNextController(getMyAddress());
-        if(nextOwner != null) {
-            tokens.remove(group);
-            token.clearBeforeTransmition();
-            MNCDatagram data = new MNCDatagram(getMyAddress(), nextOwner, group, MNCDatagram.TYPE.GET_TOKEN, token);
-            sendUnicastDatagram(data);
+        if(token != null) {
+            MNCAddress nextOwner = token.getNextController(getMyAddress());
+            if (nextOwner != null) {
+                tokens.remove(group);
+                token.clearBeforeTransmition();
+                MNCDatagram data = new MNCDatagram(getMyAddress(), nextOwner, group, MNCDatagram.TYPE.GET_TOKEN, token);
+                if(sendUnicastDatagram(data) == 0){
+                    tokens.put(group, token);
+                }
+                else{
+                    tokensOwners.put(group, nextOwner);
+                }
+            }
         }
     }
 

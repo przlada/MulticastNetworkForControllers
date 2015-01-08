@@ -56,38 +56,6 @@ public class MNCMonitor extends MNCDevice {
                 }
             }
         }
-        /*
-        switch (datagram.getType()){
-            case I_HAVE_TOKEN:
-                tokensOwners.put(datagram.getGroup(),datagram.getSender());
-                log.actionNewTokenOwner(datagram.getGroup());
-                break;
-            case WHO_IN_GROUP:
-                if(getGroups().contains(datagram.getGroup())){
-                    try {
-                        sendDatagram(new MNCDatagram(getMyAddress(), MNCConsts.MULTICAST_ADDR, datagram.getGroup(), MNCDatagram.TYPE.IAM_IN_GROUP, null));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                break;
-            case DATA_FRAGMENT:
-                if(getGroups().contains(datagram.getGroup())){
-                    if(!consumedParametersSets.containsKey(datagram.getGroup()) || !consumedParametersSets.get(datagram.getGroup()).contains(((MNCDeviceParameter)datagram.getData()).getParameterSetId())){
-                        if(receiveParameter(datagram.getGroup(), (MNCDeviceParameter)datagram.getData())) {
-                            if(dataConsumption(datagram.getGroup(), ((MNCDeviceParameter) datagram.getData()).getParameterSetId())){
-                                try {
-                                    sendDatagram(new MNCDatagram(getMyAddress(), MNCConsts.MULTICAST_ADDR, datagram.getGroup(), MNCDatagram.TYPE.CONSUMPTION_CONFIRMATION, ((MNCDeviceParameter)datagram.getData()).getParameterSetId()));
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
-                }
-                break;
-        }
-        */
     }
 
     public synchronized int receiveUnicastData(MNCDatagram datagram){
@@ -99,7 +67,7 @@ public class MNCMonitor extends MNCDevice {
 
     protected void checkTokenOwners(){
         for (String group : myGroups) {
-            if(tokensOwners.contains(group) == false){
+            if(tokensOwners.contains(group) == false && !tokenOwnerGetters.containsKey(group)){
                     Thread tokenGetter = new Thread(new MNCMonitorTokenGetter(this, group));
                     tokenOwnerGetters.put(group, tokenGetter);
                     tokenGetter.start();
