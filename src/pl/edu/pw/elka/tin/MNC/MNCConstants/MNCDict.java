@@ -25,7 +25,7 @@ public class MNCDict {
         PLDict.put("ControllerStarted", "Uruchomiono sterownik MNC:");
         PLDict.put("NoNameController", "brak nazwy");
         PLDict.put("HaveNewTokenOwner", "Ustalono adres sterownika z tokenem grupy:");
-        PLDict.put("SendByMulticast", "Ustalono adres sterownika z tokenem grupy:");
+        PLDict.put("SendByMulticast", "Wyslano MCAST:");
 
 
         Dicts.put(Langs.PL, PLDict);
