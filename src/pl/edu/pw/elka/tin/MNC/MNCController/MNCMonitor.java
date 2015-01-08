@@ -27,8 +27,37 @@ public class MNCMonitor extends MNCDevice {
         if(datagram.getSender().equals(getMyAddress()))
             return;
         log.actionReceiveDatagram(datagram);
-        if(datagram.getSender().equals(getMyAddress()))
-            return;
+        if(datagram.getType() == MNCDatagram.TYPE.I_HAVE_TOKEN){
+            tokensOwners.put(datagram.getGroup(),datagram.getSender());
+            log.actionNewTokenOwner(datagram.getGroup());
+        }
+        else if(datagram.getType() == MNCDatagram.TYPE.WHO_IN_GROUP){
+            if(getGroups().contains(datagram.getGroup())){
+                MNCDatagram send = new MNCDatagram(getMyAddress(), MNCConsts.MULTICAST_ADDR, datagram.getGroup(), MNCDatagram.TYPE.IAM_IN_GROUP, null);
+                try {
+                    sendDatagram(send);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                log.actionSendDatagram(send);
+            }
+        }
+        else if(datagram.getType() == MNCDatagram.TYPE.DATA_FRAGMENT){
+            if(getGroups().contains(datagram.getGroup())){
+                if(!consumedParametersSets.containsKey(datagram.getGroup()) || !consumedParametersSets.get(datagram.getGroup()).contains(((MNCDeviceParameter)datagram.getData()).getParameterSetId())){
+                    if(receiveParameter(datagram.getGroup(), (MNCDeviceParameter)datagram.getData())) {
+                        if(dataConsumption(datagram.getGroup(), ((MNCDeviceParameter) datagram.getData()).getParameterSetId())){
+                            try {
+                                sendDatagram(new MNCDatagram(getMyAddress(), MNCConsts.MULTICAST_ADDR, datagram.getGroup(), MNCDatagram.TYPE.CONSUMPTION_CONFIRMATION, ((MNCDeviceParameter)datagram.getData()).getParameterSetId()));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /*
         switch (datagram.getType()){
             case I_HAVE_TOKEN:
                 tokensOwners.put(datagram.getGroup(),datagram.getSender());
@@ -59,6 +88,7 @@ public class MNCMonitor extends MNCDevice {
                 }
                 break;
         }
+        */
     }
 
     public synchronized int receiveUnicastData(MNCDatagram datagram){
