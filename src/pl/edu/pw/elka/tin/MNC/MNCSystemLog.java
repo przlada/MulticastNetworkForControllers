@@ -86,6 +86,6 @@ public class MNCSystemLog {
     }
 
     public void dataConsumption(MNCDeviceParameterSet set){
-        print(getLangText(lang,"DataConsumption")+set.getParameterSetID());
+        print(getLangText(lang,"DataConsumption")+set.getGroup()+" "+set.getParameterSetID());
     }
 }

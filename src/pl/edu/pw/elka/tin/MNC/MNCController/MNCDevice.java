@@ -85,31 +85,25 @@ public abstract class MNCDevice implements Serializable{
         log.actionSendDatagram(d);
     }
 
-    public int sendUnicastDatagram(MNCDatagram d){
-        try{
+    public int sendUnicastDatagram(MNCDatagram d) {
+        try {
             Socket socket = new Socket(d.getReceiver().getJavaAddress(), MNCConsts.UCAST_PORT);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream in  = new ObjectInputStream(socket.getInputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
             out.writeObject(d);
             log.actionSendUnicastDatagram(d);
             int id = (Integer) in.readObject();
-            log.acction("odebrano id: "+id);
+            log.acction("odebrano id: " + id);
             socket.close();
             return id;
         } catch (UnknownHostException e) {
             System.out.println("Unknown host: kq6py");
-        } catch  (IOException e) {
+        } catch (IOException e) {
             System.out.println("No I/O");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         return 0;
-    }
-
-    public void sendParameterSet(String group, MNCDeviceParameterSet set){
-        MNCDatagram data = new MNCDatagram(myAddress,getTokensOwners().get(group),group, MNCDatagram.TYPE.DATA_FULL,set);
-        int id = sendUnicastDatagram(data);
-        set.setParameterSetID(id);
     }
 
     public boolean receiveParameter(String group, MNCDeviceParameter param){
@@ -132,11 +126,12 @@ public abstract class MNCDevice implements Serializable{
             if(!consumedParametersSets.containsKey(group))
                 consumedParametersSets.put(group, new HashSet<Integer>());
             consumedParametersSets.get(group).add(paramSetId);
-            MNCDeviceParameterSet parameterSet = new MNCDeviceParameterSet(set.remove(paramSetId));
+            MNCDeviceParameterSet parameterSet = new MNCDeviceParameterSet(group, set.remove(paramSetId));
             log.dataConsumption(parameterSet);
             return true;
         }
         return false;
     }
     protected abstract void checkTokenOwners();
+
 }

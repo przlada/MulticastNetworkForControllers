@@ -58,9 +58,9 @@ public class Main {
                     }
                     else if(command.equals("tcp")){
                         command = in.nextLine();
-                        MNCDeviceParameterSet paramSet = new MNCDeviceParameterSet();
+                        MNCDeviceParameterSet paramSet = new MNCDeviceParameterSet(command);
                         paramSet.populateSet();
-                        device.sendParameterSet(command, paramSet);
+                        ((MNCController) device).sendParameterSet(paramSet);
                     }
                     else if(command.equals("transfer")){
                         command = in.nextLine();

@@ -23,11 +23,15 @@ public class MNCController extends MNCDevice {
     protected TreeMap<String, MNCControllerTokenGetter> tokenOwnerGetters;
     private TreeMap<String, MNCToken> tokens;
 
+    private MNCDeviceParameterSet toSendBuffer;
+    private MNCDeviceParameterSet sentBuffer;
 
     public MNCController(String name, MNCAddress addr, MNCSystemLog log) throws SocketException, UnknownHostException {
         super(name, addr, log);
         tokens = new TreeMap<String, MNCToken>();
         tokenOwnerGetters = new TreeMap<String, MNCControllerTokenGetter>();
+        toSendBuffer = null;
+        sentBuffer = null;
     }
 
     public void addToken(String group){
@@ -180,6 +184,20 @@ public class MNCController extends MNCDevice {
                     tokensOwners.put(group, nextOwner);
                 }
             }
+        }
+    }
+
+    public void sendParameterSet(MNCDeviceParameterSet set){
+        MNCDatagram data = new MNCDatagram(getMyAddress(),getTokensOwners().get(set.getGroup()),set.getGroup(), MNCDatagram.TYPE.DATA_FULL,set);
+        int id = sendUnicastDatagram(data);
+        set.setParameterSetID(id);
+    }
+
+    private class sendParameterSetSupervisor implements Runnable{
+
+        @Override
+        public void run() {
+
         }
     }
 

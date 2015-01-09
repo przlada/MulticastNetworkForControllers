@@ -13,12 +13,15 @@ public class MNCDeviceParameterSet implements Serializable{
     private int parameterSetID;
     private MNCDeviceParameter[] parameters;
 
-    public MNCDeviceParameterSet(){
+    private String group;
+
+    public MNCDeviceParameterSet(String group){
+        this.group = group;
         parameterSetID = 0;
         parameters = new MNCDeviceParameter[MNCConsts.PARAMETER_SET_SIZE];
     }
-    public MNCDeviceParameterSet(Hashtable<Integer, MNCDeviceParameter> table){
-        this();
+    public MNCDeviceParameterSet(String group, Hashtable<Integer, MNCDeviceParameter> table){
+        this(group);
         int i=0;
         for(MNCDeviceParameter param : table.values()){
             parameters[i] = param;
@@ -28,6 +31,13 @@ public class MNCDeviceParameterSet implements Serializable{
             if(i>=MNCConsts.PARAMETER_SET_SIZE)
                 break;
         }
+    }
+
+    public String getGroup() {
+        return group;
+    }
+    public void setGroup(String group){
+        this.group = group;
     }
 
     public int getParameterSetID(){

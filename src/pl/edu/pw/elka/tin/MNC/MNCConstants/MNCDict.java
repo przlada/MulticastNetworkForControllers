@@ -28,7 +28,7 @@ public class MNCDict {
         PLDict.put("SendByMulticast", "Wyslano MCAST:");
         PLDict.put("ReceiveFromMulticast", "Odebrano MCAST:");
         PLDict.put("ReceiveFromUnicast", "Odebrano UCAST:");
-        PLDict.put("DataConsumption", "Soknsumowano dane:");
+        PLDict.put("DataConsumption", "Soknsumowano dane grupy:");
         PLDict.put("SendByUnicast", "Wysłano UCAST:");
         PLDict.put("AddedNewDeviceToGroup", "Dodano nowe urządzenie grupa:");
         PLDict.put("DataAlreadyConsumed", "Dane już skonsumowane:");
