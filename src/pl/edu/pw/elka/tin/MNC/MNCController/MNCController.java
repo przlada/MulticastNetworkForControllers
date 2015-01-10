@@ -201,10 +201,17 @@ public class MNCController extends MNCDevice {
     }
 
     public void sendParameterSet(MNCDeviceParameterSet set){
-        try {
-            sendBuffer.put(set);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        MNCToken token = tokens.get(set.getGroup());
+        if(token != null){
+            set.setParameterSetID(token.getNextDataId());
+            token.addParameterSetToTransmit(set, this);
+        }
+        else {
+            try {
+                sendBuffer.put(set);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
