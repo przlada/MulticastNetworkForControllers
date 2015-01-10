@@ -88,6 +88,9 @@ public class MNCControllerTokenGetter implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        finally{
+            parentController.tokenOwnerGetters.remove(group);
+        }
 
         /*
         MNCDatagram isThereToken = new MNCDatagram(parentController.getMyAddress(), MNCConsts.MULTICAST_ADDR, group, MNCDatagram.TYPE.IS_THERE_TOKEN, null);
