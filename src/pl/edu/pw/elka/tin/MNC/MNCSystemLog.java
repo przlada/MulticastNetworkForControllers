@@ -5,10 +5,10 @@ import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDatagram;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameterSet;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCToken;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
-import static pl.edu.pw.elka.tin.MNC.MNCConstants.MNCDict.*;
+import static pl.edu.pw.elka.tin.MNC.MNCConstants.MNCDict.Langs;
+import static pl.edu.pw.elka.tin.MNC.MNCConstants.MNCDict.getLangText;
 
 /**
  * Klasa odpowiedzialna za odbieranie i wyświetlanie wszelkich zdarzeń.
@@ -87,5 +87,25 @@ public class MNCSystemLog {
 
     public void dataConsumption(MNCDeviceParameterSet set){
         print(getLangText(lang,"DataConsumption")+set.getGroup()+" "+set.getParameterSetID());
+    }
+
+    public void actionSentDataBroadcastConfirm(){
+        print(getLangText(lang,"SentDataBroadcastConfirm"));
+    }
+
+    public void actionTokenOutOfReach(MNCAddress address){
+        print(getLangText(lang,"TokenOutOfReach")+address);
+    }
+
+    public void actionTokenOwnerAssignment(){
+        print(getLangText(lang,"TokenOwnerAssignment"));
+    }
+
+    public void actionTokenTransfered(MNCAddress address){
+        print(getLangText(lang,"TokenTransfered")+address);
+    }
+
+    public void actionTokenTransferError(MNCAddress address){
+        print(getLangText(lang,"TokenTransferError")+address);
     }
 }

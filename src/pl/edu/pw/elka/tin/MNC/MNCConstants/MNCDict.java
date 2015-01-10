@@ -34,6 +34,12 @@ public class MNCDict {
         PLDict.put("DataAlreadyConsumed", "Dane już skonsumowane:");
         PLDict.put("DataReBroadcast", "Dane ponownie rozgłaszane:");
         PLDict.put("ReceivedToken", "Otrzymano token:");
+        PLDict.put("SentDataBroadcastConfirm", "Potwierdzono broadcast ostatnich danych");
+        PLDict.put("TokenOutOfReach", "Nie można połączyć z tokenem: ");
+        PLDict.put("TokenOwnerAssignment", "Rozpoczynam ustalanie adresów sterowników z tokenem");
+        PLDict.put("TokenTransfered", "Przekazano token do:");
+        PLDict.put("TokenTransferError", "Błąd podczas przekazania tokena do:");
+
 
         Dicts.put(Langs.PL, PLDict);
     }

@@ -178,6 +178,7 @@ public class MNCController extends MNCDevice {
 
 
     protected synchronized void checkTokenOwners(){
+        log.actionTokenOwnerAssignment();
         for (String group : myGroups) {
             if(tokensOwners.contains(group) == false && !tokenOwnerGetters.containsKey(group)){
                 MNCControllerTokenGetter tokenGetter = new MNCControllerTokenGetter(this, group);
@@ -192,15 +193,16 @@ public class MNCController extends MNCDevice {
         if(token != null) {
             MNCAddress nextOwner = token.getNextController(getMyAddress());
             if (nextOwner != null) {
-                //Można dodać zerowanie licznika rozgłoszeń
                 tokens.remove(group);
                 token.clearBeforeTransmition();
                 MNCDatagram data = new MNCDatagram(getMyAddress(), nextOwner, group, MNCDatagram.TYPE.GET_TOKEN, token);
                 if(sendUnicastDatagram(data) < 0){
                     tokens.put(group, token);
+                    log.actionTokenTransferError(nextOwner);
                 }
                 else{
                     tokensOwners.put(group, nextOwner);
+                    log.actionTokenTransfered(nextOwner);
                 }
             }
         }
@@ -219,8 +221,10 @@ public class MNCController extends MNCDevice {
         private Boolean confirmed = false;
 
         public synchronized void receivedData(String group, int id){
-            if(waitingToConfirm != null)
-                confirmed = waitingToConfirm.getGroup().equals(group) && waitingToConfirm.getParameterSetID() == id;
+            if(waitingToConfirm != null && waitingToConfirm.getGroup().equals(group) && waitingToConfirm.getParameterSetID() == id) {
+                confirmed = true;
+                log.actionSentDataBroadcastConfirm();
+            }
         }
 
         @Override
@@ -233,6 +237,7 @@ public class MNCController extends MNCDevice {
                         MNCDatagram data = new MNCDatagram(getMyAddress(), getTokensOwners().get(set.getGroup()), set.getGroup(), MNCDatagram.TYPE.DATA_FULL, set);
                         int id = sendUnicastDatagram(data);
                         while (id <= 0) {
+                            log.actionTokenOutOfReach(getTokensOwners().get(set.getGroup()));
                             checkTokenOwners();
                             Thread.sleep(MNCConsts.WAIT_FOR_TOKEN_TIMEOUT + MNCConsts.WAIT_FOR_TMP_TOKEN + MNCConsts.WAIT_FOR_TMP_TOKEN);
                             data = new MNCDatagram(getMyAddress(), getTokensOwners().get(set.getGroup()), set.getGroup(), MNCDatagram.TYPE.DATA_FULL, set);
