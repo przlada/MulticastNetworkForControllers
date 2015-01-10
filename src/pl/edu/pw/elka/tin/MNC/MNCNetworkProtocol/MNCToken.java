@@ -1,6 +1,5 @@
 package pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol;
 
-import com.sun.javafx.fxml.expression.Expression;
 import pl.edu.pw.elka.tin.MNC.MNCAddress;
 import pl.edu.pw.elka.tin.MNC.MNCConstants.MNCConsts;
 import pl.edu.pw.elka.tin.MNC.MNCController.MNCDevice;
@@ -83,6 +82,10 @@ public class MNCToken implements Serializable {
         }
     }
 
+    private synchronized void removeFromRetransmitionBuffer(int paramId){
+        retransmitionBuffer.remove(paramId);
+    }
+
     private class TokenRetransmitionBuffer implements Runnable {
         private MNCDeviceParameterSet data;
         private TreeSet<MNCAddress> notConfirmed;
@@ -124,8 +127,8 @@ public class MNCToken implements Serializable {
                 if(notConfirmed.size() <= 0)
                     break;
             }
-            retransmitionBuffer.remove(data.getParameterSetID());
             incrementBroadcastCounter();
+            removeFromRetransmitionBuffer(data.getParameterSetID());
         }
     }
 }

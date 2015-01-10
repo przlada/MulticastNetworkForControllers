@@ -106,12 +106,13 @@ public class MNCController extends MNCDevice {
             }
         }
         else if(datagram.getType() == DATA_FRAGMENT) {
+            MNCDatagram confirmation = new MNCDatagram(getMyAddress(), MNCConsts.MULTICAST_ADDR, datagram.getGroup(), MNCDatagram.TYPE.CONSUMPTION_CONFIRMATION, ((MNCDeviceParameter)datagram.getData()).getParameterSetId());
             if(getGroups().contains(datagram.getGroup())){
                 if(!consumedParametersSets.containsKey(datagram.getGroup()) || !consumedParametersSets.get(datagram.getGroup()).contains(((MNCDeviceParameter)datagram.getData()).getParameterSetId())){
                     if(receiveParameter(datagram.getGroup(), (MNCDeviceParameter)datagram.getData())) {
                         if(dataConsumption(datagram.getGroup(), ((MNCDeviceParameter) datagram.getData()).getParameterSetId())){
                             try {
-                                sendDatagram(new MNCDatagram(getMyAddress(), MNCConsts.MULTICAST_ADDR, datagram.getGroup(), MNCDatagram.TYPE.CONSUMPTION_CONFIRMATION, ((MNCDeviceParameter)datagram.getData()).getParameterSetId()));
+                                sendDatagram(confirmation);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -120,6 +121,11 @@ public class MNCController extends MNCDevice {
                 }
                 else{
                     log.actionDataAlreadyConsumed(datagram);
+                    try {
+                        sendDatagram(confirmation);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
