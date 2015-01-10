@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.TreeMap;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDatagram.TYPE.*;
 
@@ -23,15 +25,16 @@ public class MNCController extends MNCDevice {
     protected TreeMap<String, MNCControllerTokenGetter> tokenOwnerGetters;
     private TreeMap<String, MNCToken> tokens;
 
-    private MNCDeviceParameterSet toSendBuffer;
-    private MNCDeviceParameterSet sentBuffer;
+    private BlockingQueue<MNCDeviceParameterSet> sendBuffer;
+    private Thread sendSupervisor;
 
     public MNCController(String name, MNCAddress addr, MNCSystemLog log) throws SocketException, UnknownHostException {
         super(name, addr, log);
         tokens = new TreeMap<String, MNCToken>();
         tokenOwnerGetters = new TreeMap<String, MNCControllerTokenGetter>();
-        toSendBuffer = null;
-        sentBuffer = null;
+        sendBuffer = new LinkedBlockingQueue<MNCDeviceParameterSet>();
+        sendSupervisor = new Thread(new SendParameterSetSupervisor());
+        sendSupervisor.start();
     }
 
     public void addToken(String group){
@@ -82,7 +85,7 @@ public class MNCController extends MNCDevice {
                     e.printStackTrace();
                 }
             }
-            else if(tokenOwnerGetters.containsKey(datagram.getGroup())){
+            if(tokenOwnerGetters.containsKey(datagram.getGroup())){
                 tokenOwnerGetters.get(datagram.getGroup()).foundTmpToken(datagram.getSender());
             }
         }
@@ -163,7 +166,7 @@ public class MNCController extends MNCDevice {
     }
 
 
-    protected void checkTokenOwners(){
+    protected synchronized void checkTokenOwners(){
         for (String group : myGroups) {
             if(tokensOwners.contains(group) == false && !tokenOwnerGetters.containsKey(group)){
                 MNCControllerTokenGetter tokenGetter = new MNCControllerTokenGetter(this, group);
@@ -192,16 +195,33 @@ public class MNCController extends MNCDevice {
     }
 
     public void sendParameterSet(MNCDeviceParameterSet set){
-        MNCDatagram data = new MNCDatagram(getMyAddress(),getTokensOwners().get(set.getGroup()),set.getGroup(), MNCDatagram.TYPE.DATA_FULL,set);
-        int id = sendUnicastDatagram(data);
-        set.setParameterSetID(id);
+        try {
+            sendBuffer.put(set);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
-    private class sendParameterSetSupervisor implements Runnable{
+    private class SendParameterSetSupervisor implements Runnable{
 
         @Override
         public void run() {
-
+            MNCDeviceParameterSet set;
+            while(true){
+                try {
+                    set = sendBuffer.take();
+                    MNCDatagram data = new MNCDatagram(getMyAddress(),getTokensOwners().get(set.getGroup()),set.getGroup(), MNCDatagram.TYPE.DATA_FULL,set);
+                    int id = sendUnicastDatagram(data);
+                    while(id <= 0) {
+                        checkTokenOwners();
+                        Thread.sleep(MNCConsts.WAIT_FOR_TOKEN_TIMEOUT+MNCConsts.WAIT_FOR_TMP_TOKEN);
+                        id = sendUnicastDatagram(data);
+                    }
+                    set.setParameterSetID(id);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

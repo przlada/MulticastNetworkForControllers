@@ -7,7 +7,10 @@ import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameter;
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCDeviceParameterSet;
 import pl.edu.pw.elka.tin.MNC.MNCSystemLog;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.*;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -97,7 +100,8 @@ public abstract class MNCDevice implements Serializable{
             socket.close();
             return id;
         } catch (UnknownHostException e) {
-            System.out.println("Unknown host: kq6py");
+            System.out.println("Unknown host: "+d.getReceiver());
+            return 0;
         } catch (IOException e) {
             System.out.println("No I/O");
         } catch (ClassNotFoundException e) {
