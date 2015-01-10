@@ -228,6 +228,7 @@ public class MNCController extends MNCDevice {
                     while(id <= 0) {
                         checkTokenOwners();
                         Thread.sleep(MNCConsts.WAIT_FOR_TOKEN_TIMEOUT+MNCConsts.WAIT_FOR_TMP_TOKEN+MNCConsts.WAIT_FOR_TMP_TOKEN);
+                        data = new MNCDatagram(getMyAddress(),getTokensOwners().get(set.getGroup()),set.getGroup(), MNCDatagram.TYPE.DATA_FULL,set);
                         id = sendUnicastDatagram(data);
                     }
                     set.setParameterSetID(id);
