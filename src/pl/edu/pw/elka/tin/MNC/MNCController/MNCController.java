@@ -38,7 +38,10 @@ public class MNCController extends MNCDevice {
     }
 
     public void addToken(String group){
-        MNCToken token = new MNCToken(group);
+        int counter = 0;
+        if(!consumedParametersSets.get(group).isEmpty())
+            counter = consumedParametersSets.get(group).last();
+        MNCToken token = new MNCToken(group, counter);
         token.addDevice(getMyAddress());
         tokens.put(group,token);
         tokensOwners.put(group, getMyAddress());

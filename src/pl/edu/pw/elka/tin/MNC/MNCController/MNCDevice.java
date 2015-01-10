@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Abstrakcyjna klasa reprezentująca sterownik
@@ -25,7 +26,7 @@ public abstract class MNCDevice implements Serializable{
     protected Hashtable<String, MNCAddress> tokensOwners;
     protected Set<String> myGroups;
     protected Hashtable<String, Hashtable<Integer, Hashtable<Integer, MNCDeviceParameter>>> receivedParameters;
-    protected Hashtable<String, HashSet<Integer>> consumedParametersSets;
+    protected Hashtable<String, TreeSet<Integer>> consumedParametersSets;
     private String name;
     private MNCAddress myAddress;
     private DatagramSocket udpClient;
@@ -41,7 +42,7 @@ public abstract class MNCDevice implements Serializable{
         myGroups = new HashSet<String>();
         udpClient = new DatagramSocket();
         receivedParameters = new Hashtable<String, Hashtable<Integer, Hashtable<Integer, MNCDeviceParameter>>>();
-        consumedParametersSets = new Hashtable<String, HashSet<Integer>>();
+        consumedParametersSets = new Hashtable<String, TreeSet<Integer>>();
         try {
             mcastReceiver = new Thread(new MNCMulticastReceiver(this));
             unicastReceiver = new Thread(new MNCUnicastReceiver(this));
@@ -128,7 +129,7 @@ public abstract class MNCDevice implements Serializable{
         Hashtable<Integer, Hashtable<Integer, MNCDeviceParameter>> set = receivedParameters.get(group);
         if(set != null){
             if(!consumedParametersSets.containsKey(group))
-                consumedParametersSets.put(group, new HashSet<Integer>());
+                consumedParametersSets.put(group, new TreeSet<Integer>());
             consumedParametersSets.get(group).add(paramSetId);
             MNCDeviceParameterSet parameterSet = new MNCDeviceParameterSet(group, set.remove(paramSetId));
             log.dataConsumption(parameterSet);

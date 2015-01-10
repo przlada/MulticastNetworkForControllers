@@ -28,6 +28,11 @@ public class MNCToken implements Serializable {
         retransmitionBuffer = new Hashtable<Integer, TokenRetransmitionBuffer>();
     }
 
+    public MNCToken(String group, int dataId){
+        this(group);
+        lastDataId = dataId;
+    }
+
     private synchronized void incrementBroadcastCounter(){
         broadcastCounter+=1;
         if(broadcastCounter > MNCConsts.MAX_RETRANSMITION_NUMBER){
