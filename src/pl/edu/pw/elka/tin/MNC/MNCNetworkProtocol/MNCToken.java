@@ -2,7 +2,7 @@ package pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol;
 
 import pl.edu.pw.elka.tin.MNC.MNCAddress;
 import pl.edu.pw.elka.tin.MNC.MNCConstants.MNCConsts;
-import pl.edu.pw.elka.tin.MNC.MNCController.MNCDevice;
+import pl.edu.pw.elka.tin.MNC.MNCController.MNCController;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -31,13 +31,6 @@ public class MNCToken implements Serializable {
     public MNCToken(String group, int dataId){
         this(group);
         lastDataId = dataId;
-    }
-
-    private synchronized void incrementBroadcastCounter(){
-        broadcastCounter+=1;
-        if(broadcastCounter > MNCConsts.MAX_RETRANSMITION_NUMBER){
-
-        }
     }
 
     public void clearBeforeTransmition(){
@@ -75,28 +68,31 @@ public class MNCToken implements Serializable {
         return retransmitionBuffer;
     }
 
-    public void addParameterSetToTransmit(MNCDeviceParameterSet set, MNCDevice sender){
+    public synchronized void addParameterSetToTransmit(MNCDeviceParameterSet set, MNCController sender){
         TokenRetransmitionBuffer buffer = new TokenRetransmitionBuffer(set, new TreeSet<MNCAddress>(devicesInGroup), sender);
         retransmitionBuffer.put(set.getParameterSetID(), buffer);
         new Thread(buffer).start();
     }
 
-    public void parameterSetConfirmation(int paramSetId, MNCAddress receiver){
+    public synchronized void parameterSetConfirmation(int paramSetId, MNCAddress receiver){
         if(retransmitionBuffer.containsKey(paramSetId)){
             retransmitionBuffer.get(paramSetId).parameterSetConfirmation(receiver);
         }
     }
 
-    private synchronized void removeFromRetransmitionBuffer(int paramId){
+    private synchronized void removeFromRetransmitionBuffer(int paramId, MNCController controller){
         retransmitionBuffer.remove(paramId);
+        if(broadcastCounter >= MNCConsts.MAX_BROADCAST_NUMBER && retransmitionBuffer.isEmpty()){
+            controller.transferToken(group);
+        }
     }
 
     private class TokenRetransmitionBuffer implements Runnable {
         private MNCDeviceParameterSet data;
         private TreeSet<MNCAddress> notConfirmed;
-        private MNCDevice mySender;
+        private MNCController mySender;
 
-        public TokenRetransmitionBuffer(MNCDeviceParameterSet set, TreeSet<MNCAddress> devices, MNCDevice sender){
+        public TokenRetransmitionBuffer(MNCDeviceParameterSet set, TreeSet<MNCAddress> devices, MNCController sender){
             notConfirmed = devices;
             data = set;
             mySender = sender;
@@ -132,8 +128,8 @@ public class MNCToken implements Serializable {
                 if(notConfirmed.size() <= 0)
                     break;
             }
-            incrementBroadcastCounter();
-            removeFromRetransmitionBuffer(data.getParameterSetID());
+            broadcastCounter++;
+            removeFromRetransmitionBuffer(data.getParameterSetID(), mySender);
         }
     }
 }
