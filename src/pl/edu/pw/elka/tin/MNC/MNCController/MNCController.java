@@ -220,7 +220,7 @@ public class MNCController extends MNCDevice {
                     int id = sendUnicastDatagram(data);
                     while(id <= 0) {
                         checkTokenOwners();
-                        Thread.sleep(MNCConsts.WAIT_FOR_TOKEN_TIMEOUT+MNCConsts.WAIT_FOR_TMP_TOKEN);
+                        Thread.sleep(MNCConsts.WAIT_FOR_TOKEN_TIMEOUT+MNCConsts.WAIT_FOR_TMP_TOKEN+MNCConsts.WAIT_FOR_TMP_TOKEN);
                         id = sendUnicastDatagram(data);
                     }
                     set.setParameterSetID(id);
