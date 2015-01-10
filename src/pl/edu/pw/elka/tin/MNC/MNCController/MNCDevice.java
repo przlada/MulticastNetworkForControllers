@@ -57,6 +57,10 @@ public abstract class MNCDevice implements Serializable{
         return name;
     }
 
+    public MNCSystemLog getLog(){
+        return log;
+    }
+
     public MNCAddress getMyAddress() {
         return myAddress;
     }

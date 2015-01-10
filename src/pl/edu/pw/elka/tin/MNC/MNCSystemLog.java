@@ -108,4 +108,8 @@ public class MNCSystemLog {
     public void actionTokenTransferError(MNCAddress address){
         print(getLangText(lang,"TokenTransferError")+address);
     }
+
+    public void actionRemoveDeviceFromTokenList(MNCAddress address){
+        print(getLangText(lang,"RemoveDeviceFromTokenList")+address);
+    }
 }

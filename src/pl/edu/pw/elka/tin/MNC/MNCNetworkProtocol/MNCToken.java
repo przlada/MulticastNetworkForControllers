@@ -38,10 +38,10 @@ public class MNCToken implements Serializable {
         broadcastCounter = 0;
     }
 
-    public void addDevice(MNCAddress address){
+    public synchronized void addDevice(MNCAddress address){
         devicesInGroup.add(address);
     }
-    public void removeDevice(MNCAddress address) { devicesInGroup.remove(address) ;}
+    public synchronized void removeDevice(MNCAddress address) { devicesInGroup.remove(address) ;}
 
     public MNCAddress getNextController(MNCAddress controller){
         MNCAddress next = devicesInGroup.higher(controller);
@@ -127,6 +127,10 @@ public class MNCToken implements Serializable {
                 }
                 if(notConfirmed.size() <= 0)
                     break;
+            }
+            for(MNCAddress toRemove: notConfirmed){
+                removeDevice(toRemove);
+                mySender.getLog().actionRemoveDeviceFromTokenList(toRemove);
             }
             broadcastCounter++;
             removeFromRetransmitionBuffer(data.getParameterSetID(), mySender);

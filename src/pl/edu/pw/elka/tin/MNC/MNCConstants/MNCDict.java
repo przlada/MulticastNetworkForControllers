@@ -39,6 +39,7 @@ public class MNCDict {
         PLDict.put("TokenOwnerAssignment", "Rozpoczynam ustalanie adresów sterowników z tokenem");
         PLDict.put("TokenTransfered", "Przekazano token do:");
         PLDict.put("TokenTransferError", "Błąd podczas przekazania tokena do:");
+        PLDict.put("RemoveDeviceFromTokenList", "Z ewidencji tokena usunęto:");
 
 
         Dicts.put(Langs.PL, PLDict);
