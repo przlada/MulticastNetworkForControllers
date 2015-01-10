@@ -244,6 +244,8 @@ public class MNCController extends MNCDevice {
                             id = sendUnicastDatagram(data);
                         }
                         set.setParameterSetID(id);
+                        if(tokens.containsKey(set.getGroup()))
+                            break;
                         synchronized (this) {
                             waitingToConfirm = set;
                             confirmed = false;
