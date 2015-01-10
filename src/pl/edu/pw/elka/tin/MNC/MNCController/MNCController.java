@@ -26,15 +26,15 @@ public class MNCController extends MNCDevice {
     private TreeMap<String, MNCToken> tokens;
 
     private BlockingQueue<MNCDeviceParameterSet> sendBuffer;
-    private Thread sendSupervisor;
+    private SendParameterSetSupervisor sendSupervisor;
 
     public MNCController(String name, MNCAddress addr, MNCSystemLog log) throws SocketException, UnknownHostException {
         super(name, addr, log);
         tokens = new TreeMap<String, MNCToken>();
         tokenOwnerGetters = new TreeMap<String, MNCControllerTokenGetter>();
         sendBuffer = new LinkedBlockingQueue<MNCDeviceParameterSet>();
-        sendSupervisor = new Thread(new SendParameterSetSupervisor());
-        sendSupervisor.start();
+        sendSupervisor = new SendParameterSetSupervisor();
+        new Thread(sendSupervisor).start();
     }
 
     public void addToken(String group){
@@ -113,6 +113,7 @@ public class MNCController extends MNCDevice {
             if(getGroups().contains(datagram.getGroup())){
                 if(!consumedParametersSets.containsKey(datagram.getGroup()) || !consumedParametersSets.get(datagram.getGroup()).contains(((MNCDeviceParameter)datagram.getData()).getParameterSetId())){
                     if(receiveParameter(datagram.getGroup(), (MNCDeviceParameter)datagram.getData())) {
+                        sendSupervisor.receivedData(datagram.getGroup(), ((MNCDeviceParameter) datagram.getData()).getParameterSetId());
                         if(dataConsumption(datagram.getGroup(), ((MNCDeviceParameter) datagram.getData()).getParameterSetId())){
                             try {
                                 sendDatagram(confirmation);
@@ -191,6 +192,7 @@ public class MNCController extends MNCDevice {
         if(token != null) {
             MNCAddress nextOwner = token.getNextController(getMyAddress());
             if (nextOwner != null) {
+                //Można dodać zerowanie licznika rozgłoszeń
                 tokens.remove(group);
                 token.clearBeforeTransmition();
                 MNCDatagram data = new MNCDatagram(getMyAddress(), nextOwner, group, MNCDatagram.TYPE.GET_TOKEN, token);
@@ -213,6 +215,13 @@ public class MNCController extends MNCDevice {
     }
 
     private class SendParameterSetSupervisor implements Runnable{
+        private MNCDeviceParameterSet waitingToConfirm = null;
+        private Boolean confirmed = false;
+
+        public synchronized void receivedData(String group, int id){
+            if(waitingToConfirm != null)
+                confirmed = waitingToConfirm.getGroup().equals(group) && waitingToConfirm.getParameterSetID() == id;
+        }
 
         @Override
         public void run() {
@@ -220,15 +229,26 @@ public class MNCController extends MNCDevice {
             while(true){
                 try {
                     set = sendBuffer.take();
-                    MNCDatagram data = new MNCDatagram(getMyAddress(),getTokensOwners().get(set.getGroup()),set.getGroup(), MNCDatagram.TYPE.DATA_FULL,set);
-                    int id = sendUnicastDatagram(data);
-                    while(id <= 0) {
-                        checkTokenOwners();
-                        Thread.sleep(MNCConsts.WAIT_FOR_TOKEN_TIMEOUT+MNCConsts.WAIT_FOR_TMP_TOKEN+MNCConsts.WAIT_FOR_TMP_TOKEN);
-                        data = new MNCDatagram(getMyAddress(),getTokensOwners().get(set.getGroup()),set.getGroup(), MNCDatagram.TYPE.DATA_FULL,set);
-                        id = sendUnicastDatagram(data);
+                    while(true) {
+                        MNCDatagram data = new MNCDatagram(getMyAddress(), getTokensOwners().get(set.getGroup()), set.getGroup(), MNCDatagram.TYPE.DATA_FULL, set);
+                        int id = sendUnicastDatagram(data);
+                        while (id <= 0) {
+                            checkTokenOwners();
+                            Thread.sleep(MNCConsts.WAIT_FOR_TOKEN_TIMEOUT + MNCConsts.WAIT_FOR_TMP_TOKEN + MNCConsts.WAIT_FOR_TMP_TOKEN);
+                            data = new MNCDatagram(getMyAddress(), getTokensOwners().get(set.getGroup()), set.getGroup(), MNCDatagram.TYPE.DATA_FULL, set);
+                            id = sendUnicastDatagram(data);
+                        }
+                        set.setParameterSetID(id);
+                        synchronized (this) {
+                            waitingToConfirm = set;
+                            confirmed = false;
+                        }
+                        Thread.sleep(MNCConsts.WAIT_FOR_TOKEN_TO_BROADCAST);
+                        synchronized (this) {
+                            if (confirmed)
+                                break;
+                        }
                     }
-                    set.setParameterSetID(id);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

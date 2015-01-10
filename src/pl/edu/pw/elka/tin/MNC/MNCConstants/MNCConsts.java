@@ -26,6 +26,7 @@ public interface MNCConsts {
 
     public static final int WAIT_FOR_TOKEN_TIMEOUT = 5000;
     public static final int WAIT_FOR_TMP_TOKEN = 5000;
+    public static final int WAIT_FOR_TOKEN_TO_BROADCAST = 3000;
 
     public static final Random rand = new Random(100);
     public static final int randRange = 1000;
