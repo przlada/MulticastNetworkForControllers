@@ -61,12 +61,16 @@ public class MNCController extends MNCDevice {
             MNCToken token = tokens.get(datagram.getGroup());
             if(token != null) {
                 token.addDevice(datagram.getSender());
+                log.actionAddedNewDevice(datagram.getGroup(),datagram.getSender());
                 MNCDatagram iHaveToken = new MNCDatagram(getMyAddress(), MNCConsts.MULTICAST_ADDR, datagram.getGroup(), MNCDatagram.TYPE.I_HAVE_TOKEN, null);
                 try {
                     sendDatagram(iHaveToken);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+            if(tokenOwnerGetters.containsKey(datagram.getGroup())){
+                tokenOwnerGetters.get(datagram.getGroup()).askIsThereToken();
             }
         }
         else if(datagram.getType() == I_HAVE_TMP_TOKEN) {
