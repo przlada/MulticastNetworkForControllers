@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: pl.edu.pw.elka.tin.MNC.MNCGuiManager.MNCMcastTest
+Main-Class: pl.edu.pw.elka.tin.MNC.Main
 
