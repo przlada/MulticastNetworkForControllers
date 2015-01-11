@@ -2,9 +2,7 @@ package pl.edu.pw.elka.tin.MNC.MNCGuiManager;
 
 import pl.edu.pw.elka.tin.MNC.MNCConstants.MNCConsts;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.*;
 import java.util.Enumeration;
 import java.util.TreeSet;
@@ -93,9 +91,7 @@ public class MNCMcastTest implements Runnable{
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 try {
                     udpListener.receive(packet);
-                    ByteArrayInputStream b = new ByteArrayInputStream(packet.getData());
-                    ObjectInputStream o = new ObjectInputStream(b);
-                    received.add((String)o.readObject());
+                    received.add(new String(packet.getData()));
                     Runtime.getRuntime().exec("clear");
                     int i = 1;
                     for(String address: received){
@@ -103,8 +99,6 @@ public class MNCMcastTest implements Runnable{
                         i++;
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
             }
