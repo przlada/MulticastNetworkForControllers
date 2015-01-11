@@ -7,6 +7,6 @@ public class MNCGuiServer implements Runnable{
 
     @Override
     public void run() {
-
+        //dziala
     }
 }
